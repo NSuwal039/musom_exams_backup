@@ -1,0 +1,18 @@
+{% extends 'student_base.html' %}
+{% block content %}
+
+{% if exams %}
+    <table class = 'table table-hover'>
+        <thead class = 'thead thead-dark'><tr>
+            <th> Exam </th>
+            <th> Time </th>
+            <th> Room </th>
+        </tr></thead>
+        {%for exam in exams%}
+            <tr><td>{{ exam.exam_id.exam_title}}</td>
+            <td>{{ exam.exam_id.date}} {{ exam.exam_id.time}}</td>
+            <td>{{ exam.exam_id.room}}</td></tr>
+        {% endfor %}
+    </table>
+{% endif %}
+{% endblock %}

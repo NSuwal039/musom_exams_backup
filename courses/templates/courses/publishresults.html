@@ -1,0 +1,13 @@
+{% extends 'courses_base.html'%}
+{% block content %}
+    <h4>Select exam to view results:</h4>
+    <form action ="{% url 'courses:viewresults' %}" method = 'GET'>
+        <!-- {% csrf_token%} -->
+        <select name = 'exam'>
+            {% for exams in exams%}
+                <option name = 'option' value='{{ exams.exam_id}}'>{{ exams.exam_title}}</option>
+            {% endfor%}
+        </select>
+        <input type = 'submit'>
+    </form>
+{% endblock %}

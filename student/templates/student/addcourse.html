@@ -1,0 +1,23 @@
+{% extends 'student_base.html' %}
+
+    {% block content%}
+    {% if courses %}
+    <h4>Choose course to apply:</h4>
+
+    <form action="{% url 'student:addcourse' %}" method="POST">
+        {% csrf_token%}
+        <select name = 'course'>
+            {% for course in courses%}
+                <option name="sub" value="{{course.subject_code}}">{{course.subject_name}}</option>
+            {%endfor%}
+            </select>
+            <input type="submit">
+
+    </form>
+    {% else %}
+    <h4> There are no courses available. </h4>
+    {% endif %}
+    <hr>
+    {% endblock %}
+    
+    {% block title%}| Add Course{% endblock %}
