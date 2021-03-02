@@ -1,0 +1,15 @@
+{% extends 'teacher_base.html' %}
+{% block content %}
+<h4>Select exam to mark:</h4>
+    <form action="{% url 'teacher:subscore'%}">
+    <select name = 'exam'>
+    {% for exam in exams%}
+        <option name="sub" value="{{exam.exam_id}}">{{exam.exam_title}}</option>
+    {%endfor%}
+    </select>
+    <input type="submit">
+    </form>
+    
+{% endblock %}    
+    
+{% block title%} | Select course{% endblock %}

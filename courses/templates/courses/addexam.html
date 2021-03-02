@@ -1,0 +1,11 @@
+{% extends 'courses_base.html'%}
+{% block content %}
+    <h2>Enter details for exam:</h2>
+    <table border="2">
+    <form action="{% url 'courses:addexam' %}" method="POST">
+        {% csrf_token %}
+        <table> {{ form.as_table }}</table>
+        <tr><td><input type="submit"></td></tr>
+    </form>
+</table>
+{% endblock %}

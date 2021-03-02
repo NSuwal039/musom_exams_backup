@@ -1,0 +1,32 @@
+{% extends 'teacher_base.html' %}
+{% block content %}
+    <h4>Choose Subject:</h4>
+    <form action="{% url 'teacher:checkscore' %}" method="POST">
+        {% csrf_token %}
+        <select name = "exam_id">
+            {% for exam in exams%}
+            <option name="sub" value="{{exam.exam_id}}">{{exam.exam_title}}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" value="Select">
+    </form>
+    <hr>
+
+    {% if code == 1%}
+    {% if students %}
+        <table class ="table table-hover">
+            
+            <thead class="thead-dark"><th colspan="2">{{selected_exam.exam_title}}</th></thead>
+        {% for students in students%}
+        <tr>
+        <td>{{ students.student_id.student_name}}</td> <td>{{ students.marks}}</td>
+        </tr>
+        {%endfor%}
+        </table>
+    {% else %}
+    <h4>There are no records for the selected exam.</h4>
+    {% endif %}
+    {% endif %}
+{% endblock %}
+
+{% block title%} | Check score{% endblock %}
