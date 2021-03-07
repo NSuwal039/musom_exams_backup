@@ -1,15 +1,38 @@
 {% extends 'teacher_base.html' %}
 {% block content %}
 <h4>Select exam to mark:</h4>
-    <form action="{% url 'teacher:subscore'%}">
-    <select name = 'exam'>
+    <!-- <form action="{% url 'teacher:subscore'%}" id="exam_form"> -->
+    <form id="exam_form">
+    <select name = 'exam' id="exam_select">
     {% for exam in exams%}
         <option name="sub" value="{{exam.exam_id}}">{{exam.exam_title}}</option>
     {%endfor%}
     </select>
-    <input type="submit">
+    <input type="submit" value="Confirm">
     </form>
     
+    <div id="entryfield">
+
+    </div>
 {% endblock %}    
     
 {% block title%} | Select course{% endblock %}
+
+{% block javascript %}
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script>
+    $("#exam_form").submit(function(event){
+        event.preventDefault();
+        exam_id = $("#exam_select").val();
+
+        $.ajax({
+            url: "{% url 'teacher:examsAjax'%}",
+            data: {'exam_id':exam_id},
+            success: function (data) {
+                $("#entryfield").html(data);
+            }
+        })
+    })
+    
+</script>
+{% endblock %}

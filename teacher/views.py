@@ -9,9 +9,8 @@ from .forms import gradesform
 
 
 # # Create your views here.
-teach = 't_0001'
+teach = 't_0003'
 teacher = get_object_or_404(Teacher, teacher_id = teach)
-# teacher = Teacher.objects.all().filter(teacher_id = 1)
 
 def index(request):
     return render (request, 'teacher/index.html', {'teacher':teacher})
@@ -19,7 +18,7 @@ def index(request):
 def addscore(request):
 
     if request.method=='GET':
-        subject = Subject.objects.all().filter(teacher_id='teach_001')
+        subject = Subject.objects.all().filter(teacher_id=teacher)
         exams = Exams.objects.all().filter(subject_id__in=subject)
         return render(request, 'teacher/addscore.html', {'teacher': teacher, 'subject':subject,'exams':exams})
 
@@ -82,4 +81,11 @@ def checkscore(request):
         selected_object = request.POST['exam_id']
         context = {'teacher':teacher,'students':studentrecords, 'exams':exams, 'selected_exam':selected_exam, 'code':code}
         return render(request, 'teacher/checkscore.html', context)
+
+def examsAjax(request):
+    exam_id = request.GET.get('exam_id')
+    selected_exam = get_object_or_404(Exams, exam_id=exam_id)
+    student_data = studentgrades.objects.all().filter(exam_id=selected_exam)
+
+    return render (request, 'teacher/submit_score.html', {'students':student_data, 'exam':selected_exam})
         

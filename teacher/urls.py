@@ -10,4 +10,5 @@ urlpatterns=[
     path('submitscore', views.submitscore, name='submitscore'),
     path('checkscore', views.checkscore, name='checkscore'),
     path('studentlist', views.studentlist, name='studentlist'),
+    path('ajax/studentlist', views.examsAjax, name='examsAjax'),
 ]

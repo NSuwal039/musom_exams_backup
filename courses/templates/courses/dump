@@ -1,0 +1,9 @@
+<script type="text/javascript">
+    $(window).on('load', function() {
+        {% if messages %}
+            {% for message in messages %}
+                $('#myModal').modal('show');
+            {% endfor %}
+        {% endif %}
+        });
+</script>

@@ -1,25 +1,51 @@
 {% extends 'student_base.html'%}
 {% block content %}
 
-{% if courses %}
-    <table class="table table-hover">
+<form id = "semester-form">
+    <div class="row" class="mb-3">
+        {% csrf_token %}
+        <label for "select_sem">Select semester:</label>
+        <select id="select_sem" class="form-select form-select-lg mb-3" >
+        {% for semester in semesters%}
+            <option value ='{{semester}}'> {{semester}} </option>
+        {% endfor %}
+    </select>
+    
+    </div>
+</form>
+
+    <table class="table table-hover" id='table_data'>
         <thead class="thead thead-dark">
             <tr>
                 <th>Course</th>
                 <th>Teacher</th>
             </tr>
         </thead>
-        {% for course in courses%}
-        <tr>
-            <td>{{course.subject_id.subject_name}}</td>
-            <td>{{course.subject_id.teacher_id.teacher_name}}</td>
-        </tr>
-        {% endfor %}
+        
     </table>
-{% endif %}
+
+
 
 {% endblock %}
 
 {% block name%}
 {{ student.student_name}}
+{% endblock %}
+
+{% block javascript %}
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script> 
+    $("#select_sem").change(function(){
+        semester = $(this).val();
+
+        $.ajax({
+            url: "{% url 'student:postCourses'%}",
+            data: {'semester':semester},
+            success: function (data) {
+                $("#table_data").html(data);
+            }
+        })
+    })
+    
+</script>
 {% endblock %}

@@ -1,23 +1,32 @@
 {% extends 'student_base.html' %}
 
     {% block content%}
-    {% if courses %}
-    <h4>Choose course to apply:</h4>
+        <form class = "form-group" id="form">
+            <label for = "entry-field">Enter subject course: </label>
+            <input type ="text" id="entry-field" placeholder="Subject code">
+            <input type ="submit" value="Confirm">
+        </form>
 
-    <form action="{% url 'student:addcourse' %}" method="POST">
-        {% csrf_token%}
-        <select name = 'course'>
-            {% for course in courses%}
-                <option name="sub" value="{{course.subject_code}}">{{course.subject_name}}</option>
-            {%endfor%}
-            </select>
-            <input type="submit">
-
-    </form>
-    {% else %}
-    <h4> There are no courses available. </h4>
-    {% endif %}
-    <hr>
+        <div id="entryfield"></div>
     {% endblock %}
     
     {% block title%}| Add Course{% endblock %}
+
+    {% block javascript %}
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script>
+    $("#form").submit(function(event){
+        event.preventDefault();
+        search_string = $("#entry-field").val();
+
+        $.ajax({
+            url: "{% url 'student:addAjax'%}",
+            data: {'search_string':search_string},
+            success: function (data) {
+                $("#entryfield").html(data);
+            }
+        })
+    })
+    
+</script>
+{% endblock %}

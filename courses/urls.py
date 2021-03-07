@@ -9,4 +9,7 @@ urlpatterns=[
     path('addexam', views.addexam, name='addexam'),
     path('examresults', views.examresults, name='examresults'),
     path('viewresults', views.viewresults, name='viewresults'),
+    path('ajax/subjectAjax', views.subjectAjax, name = "subjectAjax"),
+    path('ajax/termAjax', views.termAjax, name = "termAjax"),
+    path('ajax/yearAjax', views.yearAjax, name = "yearAjax"),
 ]
