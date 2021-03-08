@@ -29,8 +29,8 @@
     <div class="card-body login-card-body">
       <p class="login-box-msg">Sign in to start your session</p>
 
-      <form action="{% url 'teacher:login' %}" method="post">
-          {% csrf_token %}
+      <form action="{% url 'student:index' %}" method="post">
+        {% csrf_token %}
         <div class="input-group mb-3">
           <input type="text" class="form-control" placeholder="UserID" name="userID">
           <div class="input-group-append">

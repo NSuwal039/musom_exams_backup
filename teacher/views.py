@@ -7,9 +7,8 @@ from student.models import Student
 from django.urls import reverse
 from .forms import gradesform
 
-
 # # Create your views here.
-teach = 't_0003'
+teach = 't_0002'
 teacher = get_object_or_404(Teacher, teacher_id = teach)
 
 def index(request):
@@ -37,7 +36,6 @@ def submitscore(request):
     exam = get_object_or_404(Exams, exam_id=request.POST['exam_id'])
     selected_subject = exam.subject_id
     students = selectedcourses.objects.all().filter(subject_id=selected_subject)
-    edit=0
     new=0
     for stu in students:
         student_object = stu.student_id
@@ -51,7 +49,6 @@ def submitscore(request):
             else:
                 pass
             editobject.save()
-            edit+=1
         else:
             if request.POST[stu.student_id.student_id]:
                 marks=marks
@@ -61,7 +58,7 @@ def submitscore(request):
             exam_marks.save()
             new+=1
 
-        return HttpResponseRedirect(reverse('teacher:index'))
+    return HttpResponseRedirect(reverse('teacher:index'))
 
 def studentlist(request):
     return render (request, 'teacher/studentlist.html', {'teacher':teacher})

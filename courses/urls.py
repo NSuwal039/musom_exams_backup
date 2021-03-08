@@ -9,7 +9,9 @@ urlpatterns=[
     path('addexam', views.addexam, name='addexam'),
     path('examresults', views.examresults, name='examresults'),
     path('viewresults', views.viewresults, name='viewresults'),
-    path('ajax/subjectAjax', views.subjectAjax, name = "subjectAjax"),
-    path('ajax/termAjax', views.termAjax, name = "termAjax"),
-    path('ajax/yearAjax', views.yearAjax, name = "yearAjax"),
+    path('examtoppers', views.examtoppers, name='examtoppers'),
+    path('addstudentmarks', views.addstudentmarks, name='addstudentmarks'),
+    path('submitscores', views.submitscores, name='submitscores'),
+    path('studentmarksentry/<str:id>', views.studentsmarksentry, name='studentmarksentry'),
+    path('ajax/studentlist', views.studentsAjax, name='studentlist'),
 ]

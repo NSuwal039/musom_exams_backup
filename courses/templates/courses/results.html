@@ -4,8 +4,8 @@
     <h4>Here are the results for {{exam.exam_title}}</h4>
     <hr>
     <table class="table table-hover">
-        <thead class="thead-light">
-        <tr><th>Student Name</th>
+        <thead class="thead-dark">
+        <tr style=" text-align: center"><th>Student Name</th>
         <th>Marks</th></tr></thead>
         {% for result in results%}
             <tr><td style="width: 50%; text-align: center">{{result.student_id.student_name}}</td>

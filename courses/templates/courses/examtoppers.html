@@ -1,7 +1,7 @@
-{% extends 'teacher_base.html' %}
+{% extends 'courses_base.html' %}
 {% block content %}
     <h4>Choose Exam:</h4>
-    <form action="{% url 'teacher:checkscore' %}" method="POST">
+    <form action="{% url 'courses:examtoppers' %}" method="POST">
         {% csrf_token %}
         <select name = "exam_id">
             {% for exam in exams%}
@@ -12,11 +12,15 @@
     </form>
     <hr>
 
-    {% if code == 1%}
     {% if students %}
+    <h4>{{selected_exam.exam_title}}</h4>
         <table class ="table table-hover">
-            
-            <thead class="thead-dark"><th colspan="2">{{selected_exam.exam_title}}</th></thead>
+            <thead class="thead-dark">
+            <tr>
+                <th>Student name</th>
+                <th>Marks obtained</th>
+            </tr>
+            </th></thead>
         {% for students in students%}
         <tr>
         <td>{{ students.student_id.student_name}}</td> <td>{{ students.marks}}</td>
@@ -25,7 +29,6 @@
         </table>
     {% else %}
     <h4>There are no records for the selected exam.</h4>
-    {% endif %}
     {% endif %}
 {% endblock %}
 

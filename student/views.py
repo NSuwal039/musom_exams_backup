@@ -7,50 +7,41 @@ from courses.models import Exams, studentgrades, Subject, selectedcourses
 from django.urls import reverse
 from django.core import serializers
 from django.http import JsonResponse
+from django.contrib import messages
 
-# # Create your views here.
-
-# """ 
-# def login(request):
-#     if request.method == 'GET':
-#         return render(request, 'student/login.html')
-#     else:
-#         student_get = get_object_or_404(Student, student_id = request.POST['userID'])
-#         return render(request, 'student/index2.html', {'student': student_get})
-#  """
-
-stu_id = 'Stu_0001'
-student = get_object_or_404(Student, student_id = stu_id)
-
+student = Student.objects.none()
 
 def index(request):
+    if request.method == 'POST':
+        request.session['user_id'] = request.POST['userID']
     
+    # message = ''
+    # if 'message' in request.session:
+    #     message = request.session['message']
+    #     del request.session['message']
+    student = get_object_or_404(Student, student_id = request.session['user_id'])
     return render(request, 'student/index.html', {'student':student})
 
 def checkscore(request):
+    student = get_object_or_404(Student, student_id = request.session['user_id'])
+    print(student)
     grades = studentgrades.objects.all().filter(student_id=student).exclude(marks=-1)
     remaining = studentgrades.objects.all().filter(student_id=student).filter(marks=-1)
     SEM_CHOICES = [(r) for r in range(1, student.semester+1)]
     return render(request, 'student/checkscore.html', {'student': student, 'grades':grades, 'remaining':remaining, 'semesters':SEM_CHOICES})
 
 def addcourse(request):
-    if request.method == 'GET':
-        courses_remove = selectedcourses.objects.all().filter(student_id=student)
-        subject_list = Subject.objects.all()
-        for course in courses_remove:
-            subject_list = subject_list.exclude(subject_code=course.subject_id.subject_code)
+    student = get_object_or_404(Student, student_id = request.session['user_id'])
+    
+    courses_remove = selectedcourses.objects.all().filter(student_id=student)
+    subject_list = Subject.objects.all()
+    for course in courses_remove:
+        subject_list = subject_list.exclude(subject_code=course.subject_id.subject_code)
 
-        return render(request, 'student/addcourse.html', {'student':student, 'courses':subject_list})
-    else:
-        course_object = get_object_or_404(Subject, subject_code = request.POST['course'])
-        student_object = student
-
-        to_add = selectedcourses (subject_id=course_object, student_id=student_object, year = 1)
-        to_add.save()
-        message = "Course selection successful."
-        return HttpResponseRedirect(reverse('student:viewcourses'))
+    return render(request, 'student/addcourse.html', {'student':student, 'courses':subject_list})
 
 def registerexam(request):
+    student = get_object_or_404(Student, student_id = request.session['user_id'])
     if request.method == 'GET':
         courses = selectedcourses.objects.all().filter(student_id = student)
         exam = Exams.objects.all()
@@ -68,26 +59,31 @@ def registerexam(request):
         exam=get_object_or_404(Exams, exam_id=examid)
         objectdata = studentgrades(student_id = student, exam_id = exam, marks = -1, semester = student.semester)
         objectdata.save()
-        return HttpResponseRedirect(reverse('student:examdetails'))
+        messages.success(request, 'Course ' + exam.exam_title + ' added.')
+        return HttpResponseRedirect(reverse('student:index'))
     
 def examdetails(request):
+    student = get_object_or_404(Student, student_id = request.session['user_id'])
     exams = studentgrades.objects.all().filter(student_id = student)
     SEM_CHOICES = [(r) for r in range(1, student.semester+1)]
     # to_send = Exams.objects.all().filter(exam_id__in = exams)
     return render(request, 'student/examdetails.html', {'student':student, 'exams':exams, 'semesters':SEM_CHOICES})
 
 def viewcourses(request):
+    student = get_object_or_404(Student, student_id = request.session['user_id'])
     SEM_CHOICES = [(r) for r in range(1, student.semester+1)]
     courses = selectedcourses.objects.all().filter(student_id = student)
     return render (request, 'student/viewcourses.html', {'courses':courses, 'student':student, 'semesters':SEM_CHOICES})
 
-def postCourses(request):   
+def postCourses(request):
+    student = get_object_or_404(Student, student_id = request.session['user_id'])
     semester = request.GET.get('semester')
     courses_data = selectedcourses.objects.all().filter(student_id = student).filter(semester=semester)
     context = { 'courses' : courses_data}
     return render(request, 'student/courseslist.html', context)
     
 def postGrades(request):
+    student = get_object_or_404(Student, student_id = request.session['user_id'])
     semester = request.GET.get('semester')
     grades_data =  studentgrades.objects.all().filter(student_id=student).filter(semester=semester).exclude(marks=-1)
     remaining = studentgrades.objects.all().filter(student_id=student).filter(semester=semester).filter(marks=-1)
@@ -95,11 +91,13 @@ def postGrades(request):
     return render(request, 'student/grades.html', context)
 
 def postExams(request):
+    student = get_object_or_404(Student, student_id = request.session['user_id'])
     semester = request.GET.get('semester')
     exams_data = studentgrades.objects.all().filter(student_id = student).filter(semester=semester)
     return render(request, 'student/exams.html', {'exams': exams_data})
 
 def addAjax(request):
+    student = get_object_or_404(Student, student_id = request.session['user_id'])
     search_string = request.GET.get("search_string")
     course_list = []
     course_all = Subject.objects.all()
@@ -117,11 +115,16 @@ def addAjax(request):
     return render(request, 'student/courseaddlist.html', {'courses':final_list})
 
 def confirmAjax(request):
+    student = get_object_or_404(Student, student_id = request.session['user_id'])
     course_code = request.GET.get("course_id")
     student_object = student
     course_object = get_object_or_404(Subject, subject_code = course_code)
 
     to_add = selectedcourses (subject_id=course_object, student_id=student_object, year = datetime.now().year, semester=student_object.semester)
-    to_add.save()
+    to_add.save() 
+    messages.success(request, 'Course ' + course_object.subject_name + ' added.')
+    # return redirect('student:addcourse')
+    return HttpResponseRedirect(reverse('student:addcourse'))
 
-    return redirect('student:addcourse')
+def login(request):
+    return render(request, 'student/login.html')

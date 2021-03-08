@@ -51,3 +51,6 @@ class selectedcourses(models.Model):
     subject_id = models.ForeignKey(Subject, default=None, on_delete=models.CASCADE)
     year = models.IntegerField(choices=YEAR_CHOICES, default=datetime.datetime.now().year)
     semester = models.IntegerField(default = None)
+
+    def __str__(self):
+        return self.student_id.student_name + " " + self.subject_id.subject_name
