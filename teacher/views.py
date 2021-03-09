@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.db.models.query import QuerySet
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
@@ -7,21 +8,22 @@ from student.models import Student
 from django.urls import reverse
 from .forms import gradesform
 
-# # Create your views here.
-teach = 't_0002'
-teacher = get_object_or_404(Teacher, teacher_id = teach)
 
 def index(request):
+    if request.method == 'POST':
+        request.session['teacherID'] = request.POST['teacherID']
+    teacher = get_object_or_404(Teacher, teacher_id = request.session['teacherID'])
     return render (request, 'teacher/index.html', {'teacher':teacher})
 
 def addscore(request):
-
+    teacher = get_object_or_404(Teacher, teacher_id = request.session['teacherID'])
     if request.method=='GET':
         subject = Subject.objects.all().filter(teacher_id=teacher)
         exams = Exams.objects.all().filter(subject_id__in=subject)
         return render(request, 'teacher/addscore.html', {'teacher': teacher, 'subject':subject,'exams':exams})
 
 def subscore(request):
+    teacher = get_object_or_404(Teacher, teacher_id = request.session['teacherID'])
     exam_code = request.GET['exam']
     selected_exam = get_object_or_404(Exams, exam_id=exam_code)
     selected_subject=selected_exam.subject_id
@@ -33,6 +35,7 @@ def subscore(request):
     return render (request, 'teacher/dump.html', context )
 
 def submitscore(request):
+    teacher = get_object_or_404(Teacher, teacher_id = request.session['teacherID'])
     exam = get_object_or_404(Exams, exam_id=request.POST['exam_id'])
     selected_subject = exam.subject_id
     students = selectedcourses.objects.all().filter(subject_id=selected_subject)
@@ -48,6 +51,7 @@ def submitscore(request):
                 editobject.marks=marks
             else:
                 pass
+            messages.success(request, 'Marks entry successful.')
             editobject.save()
         else:
             if request.POST[stu.student_id.student_id]:
@@ -55,16 +59,19 @@ def submitscore(request):
             else:
                 marks=0        
             exam_marks = studentgrades( student_id=student_object, exam_id=exam_object, marks=marks)
+            messages.success(request, 'Marks entry successful.')
             exam_marks.save()
             new+=1
 
     return HttpResponseRedirect(reverse('teacher:index'))
 
 def studentlist(request):
+    teacher = get_object_or_404(Teacher, teacher_id = request.session['teacherID'])
     return render (request, 'teacher/studentlist.html', {'teacher':teacher})
 
     
 def checkscore(request):
+    teacher = get_object_or_404(Teacher, teacher_id = request.session['teacherID'])
     teacher = get_object_or_404(Teacher, teacher_id=teach)
     subjects = Subject.objects.all().filter(teacher_id=teacher)
     exams = Exams.objects.all().filter(subject_id__in=subjects)
@@ -80,9 +87,13 @@ def checkscore(request):
         return render(request, 'teacher/checkscore.html', context)
 
 def examsAjax(request):
+    # teacher = get_object_or_404(Teacher, teacher_id = request.session['teacherID'])
     exam_id = request.GET.get('exam_id')
     selected_exam = get_object_or_404(Exams, exam_id=exam_id)
     student_data = studentgrades.objects.all().filter(exam_id=selected_exam)
 
     return render (request, 'teacher/submit_score.html', {'students':student_data, 'exam':selected_exam})
+
+def login(request):
+    return render(request, 'teacher/login.html')
         

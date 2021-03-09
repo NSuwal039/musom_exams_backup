@@ -22,6 +22,7 @@ def addcourse(request):
         formdata = CoursesForm(request.POST)
         if formdata.is_valid():
             formdata.save()
+            messages.success(request, 'Course info added.')
             return HttpResponseRedirect(reverse('courses:index'))
         else:
             messages.error(request, "Course info invalid. Please check your information and try again.")
@@ -37,6 +38,7 @@ def addexam(request):
         examinfo = ExamsForm(request.POST)
         if examinfo.is_valid():
             examinfo.save()
+            messages.success(request, 'Exam info added.')
             return HttpResponseRedirect(reverse('courses:index'))
         else:
             messages.error(request, "Exam info invalid. Please check your information and try again.")
@@ -98,6 +100,8 @@ def submitscores(request):
             else:
                 pass
             editobject.save()
+            messages.success(request, 'Marks entry successful.')
+            print(messages)
         else:
             if request.POST[exam.exam_id.exam_title]:
                 marks=marks
@@ -105,6 +109,8 @@ def submitscores(request):
                 marks=0        
             exam_marks = studentgrades( student_id=student_object, exam_id=exam_object, marks=marks)
             exam_marks.save()
+            messages.success(request, 'Marks entry successful.')
+            print (messages)
 
     return HttpResponseRedirect(reverse('courses:index'))
         

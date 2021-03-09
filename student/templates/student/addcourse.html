@@ -32,21 +32,7 @@
 
 {% block head %}
 
-<script>  
-    /* {% if messages %}
-      {% for message in messages %}
-        $(window).on('load', function() {
-            $('#exampleModal').modal('show');
-            $('#message_text').text('{{messages}}')
-        });  
-      {% endfor %}
-    {% endif %}  */
-    {% if messages %}
-      {% for message in messages %}
-        alert('{{message}}')
-      {% endfor %}
-    {% endif %} 
-</script>
+
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

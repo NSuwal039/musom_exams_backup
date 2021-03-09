@@ -14,11 +14,6 @@ student = Student.objects.none()
 def index(request):
     if request.method == 'POST':
         request.session['user_id'] = request.POST['userID']
-    
-    # message = ''
-    # if 'message' in request.session:
-    #     message = request.session['message']
-    #     del request.session['message']
     student = get_object_or_404(Student, student_id = request.session['user_id'])
     return render(request, 'student/index.html', {'student':student})
 
@@ -59,7 +54,7 @@ def registerexam(request):
         exam=get_object_or_404(Exams, exam_id=examid)
         objectdata = studentgrades(student_id = student, exam_id = exam, marks = -1, semester = student.semester)
         objectdata.save()
-        messages.success(request, 'Course ' + exam.exam_title + ' added.')
+        messages.success(request, 'Exam ' + exam.exam_title + ' register successful.')
         return HttpResponseRedirect(reverse('student:index'))
     
 def examdetails(request):
