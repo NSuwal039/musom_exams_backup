@@ -72,7 +72,6 @@ def studentlist(request):
     
 def checkscore(request):
     teacher = get_object_or_404(Teacher, teacher_id = request.session['teacherID'])
-    teacher = get_object_or_404(Teacher, teacher_id=teach)
     subjects = Subject.objects.all().filter(teacher_id=teacher)
     exams = Exams.objects.all().filter(subject_id__in=subjects)
 

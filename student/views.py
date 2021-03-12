@@ -123,3 +123,4 @@ def confirmAjax(request):
 
 def login(request):
     return render(request, 'student/login.html')
+
