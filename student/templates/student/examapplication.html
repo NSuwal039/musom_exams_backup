@@ -1,0 +1,41 @@
+{% extends 'student_base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+    <form id="terms-form">
+        <label for="terms">Select examination term:</label>
+        <select name = "terms" id="terms-select">
+            {%for term in terms%}
+                <option name = "{{ term.exam_name }}" value="{{ term.pk }}">{{ term.exam_name }}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" value="confirm">
+    </form>
+    <hr>
+    <div id ="exams-list"></div>
+
+
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        $("#terms-form").submit(function(event){
+            event.preventDefault();
+            var term_id = $("#terms-select").val();
+            //alert(term_id)
+
+            $.ajax({
+                url: "{% url 'student:examslist'%}",
+                data: {'term_id':term_id},
+                success: function (data) {
+                    $("#exams-list").html(data);
+                }
+            })
+        })
+
+
+
+
+    </script>
+{% endblock %}
