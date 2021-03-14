@@ -11,6 +11,8 @@ from django.core import serializers
 from django.http import JsonResponse
 from django.contrib import messages
 from courses.forms import ExamApplicationForm
+from django.db.models import Q
+
 
 student = Student.objects.none()
 
@@ -110,7 +112,7 @@ def examslist(request):
     for exam in already_selected:
         exams=exams.exclude(pk=exam.exam.exam_id)
 
-    return render(request, 'ajax/examslist.html', {'exams':exams, 'count':count})
+    return render(request, 'student/examslist.html', {'exams':exams, 'count':count})
 
 def testexamAjax(request):
     student = get_object_or_404(Student, student_id = request.session['user_id'])
@@ -181,5 +183,14 @@ def login(request):
     return render(request, 'student/login.html')
 
 def printform(request):
-    return render(request, 'student/printform.html')
+    student = get_object_or_404(Student, student_id = request.session['user_id'])
+    term = Term.objects.last()
+    applications = exam_application.objects.filter(Q(student=student),Q(status="APL"),Q(exam__term=term))
+        
+    context={
+        'term':term,
+        'student':student,
+        'exams':applications
+    }
+    return render(request, 'student/printform.html', context)
 

@@ -1,4 +1,77 @@
 {% extends 'student_base.html' %}
+{% load crispy_forms_tags %}
 
 {% block content %}
+{% if exams %}
+<div id="application-form">
+    <div id="form-serial-no">
+        <div id="serial-no">
+            <Label for="student-id-label">Form no:</Label>
+            <span> some number</span>
+        </div>
+    </div>
+
+    <div id="student info">
+        <div id="student-id">
+            <Label for="student-id-label">Student ID:</Label>
+            <span> {{student.student_id}}</span>
+        </div>
+        <div id="student-name">
+            <Label for="student-name-label">Student name:</Label>
+            <span> {{student.student_name}}</span>
+        </div>
+        <div id="student-semester">
+            <Label for="student-semester-label">Semester:</Label>
+            <span> {{student.semester}}</span>
+        </div>
+    </div>
+    <hr>
+    <div id="exam-info">
+        <div id="exam-term">
+            <Label for="exam-term-label">Exam:</Label>
+            <span> {{term}}</span>
+        </div>
+        <hr>
+        <div id="subjects-label">
+            <label>Subjects</label>
+        </div>
+
+        <div id="subjects-table">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <td>Exam code</td>
+                        <td>Exam </td>
+                        <td>Date</td>
+                        <td>Exam type</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in exams%}
+                        <tr>
+                            <td>{{item.exam.exam_id}}</td>
+                            <td>{{item.exam.exam_title}}</td>
+                            <td>{{item.exam.date}}</td>
+                            <td>{% if item.exam_type == 'REG' %}
+                                Regular
+                                {% else %}
+                                Choice
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor%}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="confirm-button" style="margin: auto;">
+        <div id="button">
+            <button type="button" class="btn btn-primary">Confirm and Print</button>
+        </div>
+    </div>
+</div>
+{% else %}
+<h5>There are no exam application forms available right now.</h5>
+{% endif %}
 {% endblock %}

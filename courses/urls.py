@@ -12,6 +12,7 @@ urlpatterns=[
     path('examtoppers', views.examtoppers, name='examtoppers'),
     path('addstudentmarks', views.addstudentmarks, name='addstudentmarks'),
     path('submitscores', views.submitscores, name='submitscores'),
+    path('confirmexamapplication', views.confirmexamapplication, name='confirmexamapplication'),
     path('studentmarksentry/<str:id>', views.studentsmarksentry, name='studentmarksentry'),
     path('ajax/studentlist', views.studentsAjax, name='studentlist'),
 ]

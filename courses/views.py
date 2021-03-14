@@ -113,4 +113,7 @@ def submitscores(request):
             print (messages)
 
     return HttpResponseRedirect(reverse('courses:index'))
+
+def confirmexamapplication(request):
+    return render(request, 'courses/confirmexamapplication.html')
         

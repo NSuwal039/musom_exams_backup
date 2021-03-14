@@ -61,7 +61,7 @@ class studentgrades(models.Model):
 
 class exam_application(models.Model):
     application_id = models.AutoField(primary_key=True)
-    status = models.CharField(max_length=3, choices=FORM_STATUS, default="PEN")
+    status = models.CharField(max_length=3, choices=FORM_STATUS, default="APL")
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     exam = models.ForeignKey(Exams, on_delete=CASCADE)
     exam_type = models.CharField(max_length=5, choices=EXAM_CHOICES)
