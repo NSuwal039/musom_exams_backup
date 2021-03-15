@@ -1,4 +1,31 @@
 {% extends 'courses_base.html' %}
 
 {% block content %}
+<form class="form-inline">
+    <div class="form-group mb-2">
+        <label for="application_id">Enter form number:&nbsp&nbsp </label>
+        <input type="text" id="application_id" class="form-control"> &nbsp&nbsp
+        <button type="button" class="btn btn-primary" id="form-confirm-button">Confirm</button>
+    </div>
+
+    
+</form>
+<div id="application-list">
+</div>
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        $("#form-confirm-button").click(function(event){
+            var form_id = $("#application_id").val()
+
+            $.ajax({
+                url: " {% url 'courses:confirmAjax' %}",
+                data: {'form_id':form_id},
+                success: function(data){
+                    $("#application-list").html(data)
+                }
+            })
+        })
+    </script>
 {% endblock %}

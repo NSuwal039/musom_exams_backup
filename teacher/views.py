@@ -38,24 +38,27 @@ def submitscore(request):
     teacher = get_object_or_404(Teacher, teacher_id = request.session['teacherID'])
     exam = get_object_or_404(Exams, exam_id=request.POST['exam_id'])
     selected_subject = exam.subject_id
-    students = selectedcourses.objects.all().filter(subject_id=selected_subject)
+    students = studentgrades.objects.filter(exam_id__subject_id=selected_subject)
+    # student_list=[]
+    
     new=0
     for stu in students:
         student_object = stu.student_id
         exam_object = exam
         marks = request.POST[stu.student_id.student_id]
+        f_marks=int(marks)
         test = studentgrades.objects.all().filter(student_id=student_object, exam_id= exam_object)
         if test.exists():
             editobject = studentgrades.objects.get(student_id=student_object, exam_id= exam_object)
             if request.POST[stu.student_id.student_id]:
-                editobject.marks=marks
+                editobject.marks=f_marks
             else:
                 pass
             messages.success(request, 'Marks entry successful.')
             editobject.save()
         else:
             if request.POST[stu.student_id.student_id]:
-                marks=marks
+                marks=f_marks
             else:
                 marks=0        
             exam_marks = studentgrades( student_id=student_object, exam_id=exam_object, marks=marks)

@@ -1,9 +1,11 @@
-from django.http.response import HttpResponse
+from django import forms
+from django.db.models import Q
+from django.http.response import HttpResponse, JsonResponse
 from student.models import Student
 from django.contrib import messages 
 from django.shortcuts import redirect, render, get_object_or_404
 from teacher.models import Teacher
-from .models import Subject, selectedcourses, studentgrades
+from .models import Subject, application_form, exam_application, selectedcourses, studentgrades
 from .models import Exams
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -116,4 +118,23 @@ def submitscores(request):
 
 def confirmexamapplication(request):
     return render(request, 'courses/confirmexamapplication.html')
+
+def confirmAjax(request):
+    form_id = request.GET.get('form_id')
+    form = application_form.objects.filter(Q(form_id=form_id),Q(application_id__status="APL"))
+    return render(request, 'courses/examapplication.html', {'form':form})
+
+def confirmapplicationAjax(request):
+    form_id = request.GET.get('form_id')
+    forms = application_form.objects.filter(form_id=form_id)
+
+    for item in forms:
+        editobject = item
+        editobject.application_id.status='REG'
+        gradesobject = studentgrades(student_id=item.application_id.student, exam_id= item.application_id.exam,
+                    semester= item.application_id.student.semester, marks=-1, exam_type= item.application_id.exam_type)
+        editobject.application_id.save() 
+        gradesobject.save()
+    
+    return JsonResponse({'a':"success"})
         

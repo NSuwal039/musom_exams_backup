@@ -15,4 +15,6 @@ urlpatterns=[
     path('confirmexamapplication', views.confirmexamapplication, name='confirmexamapplication'),
     path('studentmarksentry/<str:id>', views.studentsmarksentry, name='studentmarksentry'),
     path('ajax/studentlist', views.studentsAjax, name='studentlist'),
+    path('ajax/confirmAjax', views.confirmAjax, name='confirmAjax'),
+    path('ajax/confirmapplicationAjax', views.confirmapplicationAjax, name='confirmapplicationAjax'),
 ]

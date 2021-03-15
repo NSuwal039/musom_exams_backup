@@ -58,12 +58,16 @@ class studentgrades(models.Model):
 
     def __str__(self):
         return self.student_id.student_name + " " + self.exam_id.exam_title
+    
+    def save(self, *args, **kwargs):
+        self.passed = True if self.marks>self.exam_id.pass_marks else False
+        super().save(*args, **kwargs)
 
 class exam_application(models.Model):
     application_id = models.AutoField(primary_key=True)
     status = models.CharField(max_length=3, choices=FORM_STATUS, default="APL")
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    exam = models.ForeignKey(Exams, on_delete=CASCADE)
+    exam = models.ForeignKey(Exams, on_delete=models.CASCADE)
     exam_type = models.CharField(max_length=5, choices=EXAM_CHOICES)
     semester = models.IntegerField(null=True)
     application_date = models.DateField(default=datetime.date.today)
@@ -75,6 +79,9 @@ class exam_application(models.Model):
         self.semester = self.student.semester
         super().save(*args, **kwargs)
 
+class application_form(models.Model):
+    form_id = models.IntegerField()
+    application_id = models.ForeignKey(exam_application, on_delete=models.CASCADE)
 
 class selectedcourses(models.Model):
     student_id = models.ForeignKey(Student,  on_delete=models.CASCADE, related_name='course_student')

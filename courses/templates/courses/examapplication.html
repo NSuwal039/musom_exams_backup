@@ -1,0 +1,42 @@
+<table class="table table-hover">
+    <thead class="thead thead-dark">
+        <tr>
+            <td>Form id</td>
+            <td>Student</td>
+            <td>Term</td>
+            <td>Subject</td>
+            <td>Date</td>
+            <td>Status</td>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in form%}
+        <tr id="form-data" data-id={{item.form_id}}>
+            <td>{{item.form_id}}</td>
+            <td>{{item.application_id.student.student_name}}</td>
+            <td>{{item.application_id.exam.term}}</td>
+            <td>{{item.application_id.exam.subject_id}}</td>
+            <td>{{item.application_id.exam.date}}</td>
+            <td>{{item.application_id.status}}</td>
+        </tr>
+        {% endfor %}
+            <td colspan=6 align="right"><button type="button" class="btn btn-primary" id="confirm-button"> Confirm </td>
+
+    </tbody>
+</table>
+
+
+{% block javascript %}
+<script>
+    $("#confirm-button").click(function(event){
+        var form_id = $("#form-data").data('id')
+        $.ajax({
+            url: "{% url 'courses:confirmapplicationAjax' %}",
+            data: {'form_id':form_id},
+            success: function(data){
+
+            }
+        })
+    })
+</script>
+{% endblock %}
