@@ -106,13 +106,24 @@ def examslist(request):
     term_id = request.GET.get('term_id')
     term = get_object_or_404(Term, pk=term_id)
     already_selected = exam_application.objects.filter(student=student)
+    selected_subjects=selectedcourses.objects.filter(student_id=student)
     exams = Exams.objects.filter(term = term)
+    exams_list=[]
+
+    for subject in selected_subjects:
+        # print(subject)
+        # print(subject.subject_id)
+        exam_item = exams.filter(subject_id=subject.subject_id)
+        if exam_item.exists():
+            exams_list.append(exam_item.last())
+
+    print(exams_list)
     count = already_selected.count()
 
     for exam in already_selected:
         exams=exams.exclude(pk=exam.exam.exam_id)
 
-    return render(request, 'student/examslist.html', {'exams':exams, 'count':count})
+    return render(request, 'student/examslist.html', {'exams':exams_list, 'count':count})
 
 def testexamAjax(request):
     student = get_object_or_404(Student, student_id = request.session['user_id'])

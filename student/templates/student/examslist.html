@@ -109,6 +109,10 @@
       <script>
         var exams = {}
         var count=0;
+
+        $("tr").click(function(event){
+          $(this).find("input:checkbox").click()
+        })
         
         $( document ).ready(function() {
           $("#open-ApplyDialog").prop("disabled",true)
