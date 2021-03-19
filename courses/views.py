@@ -5,11 +5,11 @@ from student.models import Student
 from django.contrib import messages 
 from django.shortcuts import redirect, render, get_object_or_404
 from teacher.models import Teacher
-from .models import Subject, application_form, exam_application, selectedcourses, studentgrades
+from .models import Subject, application_form, selectedcourses, studentgrades
 from .models import Exams
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from .forms import ExamsForm, CoursesForm
+from .forms import CoursesForm, ExamsForm
 
 # # Create your views here.
 

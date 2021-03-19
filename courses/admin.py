@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import Subject
 from .models import Exams
-from .models import selectedcourses, studentgrades, Term, exam_application, application_form
+from .models import selectedcourses, studentgrades, Term, application_form
 
 
 # Register your models here.
@@ -12,5 +12,4 @@ admin.site.register(Exams)
 admin.site.register(selectedcourses)
 admin.site.register(studentgrades)
 admin.site.register(Term)
-admin.site.register(exam_application)
 admin.site.register(application_form)

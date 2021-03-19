@@ -1,5 +1,5 @@
 from django.db import models
-from .models import Subject, Exams, exam_application
+from .models import Subject, Exams
 from django.forms import ModelForm, fields
 from django import forms
 
@@ -20,10 +20,3 @@ class ExamsForm(ModelForm):
     class Meta:
         model = Exams
         fields = '__all__'
-
-class ExamApplicationForm(ModelForm):
-    class Meta:
-        model = exam_application
-        exclude = ['student']
-
-        

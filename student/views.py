@@ -5,12 +5,11 @@ from django.db.models import fields
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render, get_object_or_404
 from student.models import Student
-from courses.models import Exams, exam_application, studentgrades, Subject, selectedcourses, Term
+from courses.models import Exams, studentgrades, Subject, selectedcourses, Term
 from django.urls import reverse
 from django.core import serializers
 from django.http import JsonResponse
 from django.contrib import messages
-from courses.forms import ExamApplicationForm
 from django.db.models import Q
 
 
@@ -20,6 +19,7 @@ def index(request):
     if request.method == 'POST':
         request.session['user_id'] = request.POST['userID']
     student = get_object_or_404(Student, student_id = request.session['user_id'])
+    print(request.POST['userID'])
     return render(request, 'student/index.html', {'student':student})
 
 def checkscore(request):
