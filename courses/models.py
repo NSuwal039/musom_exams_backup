@@ -9,13 +9,15 @@ YEAR_CHOICES = [(r,r) for r in range(1990, datetime.date.today().year+1)]
 EXAM_CHOICES = [("REG","Regular"),
                 ("CHA","Chance")]
 # TERM_CHOICES=[("MID", "Mid Term"), ("FIN","Final Term")]
-FORM_STATUS =   [("APL", "Applied"),
-                ("PEN", "Pending"),
-                ("REG", "Registered")]
+# FORM_STATUS =   [("APL", "Applied"),
+#                 ("PEN", "Pending"),
+#                 ("REG", "Registered")]
 
 class Term(models.Model):
     year = models.IntegerField(choices=YEAR_CHOICES, default=datetime.datetime.now().year)
     exam_name = models.CharField(max_length=25)
+    Start_date = models.DateField()
+    End_date = models.DateField()
    
     def __str__(self):
        return self.exam_name
@@ -37,8 +39,8 @@ class Exams(models.Model):
     exam_format = models.CharField(max_length=6, )
     date = models.DateField()
     time = models.TimeField()
-    full_marks = models.IntegerField()
-    pass_marks = models.IntegerField()
+    full_marks = models.IntegerField(default=100)
+    pass_marks = models.IntegerField(default=40)
     exam_centre = models.CharField(max_length=30, )
 
     def __str__(self):
@@ -46,12 +48,12 @@ class Exams(models.Model):
 
 class application_form(models.Model):
     application_id = models.CharField( max_length=30,primary_key=True)
-    status = models.CharField(max_length=3, choices=FORM_STATUS, default="APL")
+    status = models.BooleanField(max_length=3, default=False)  #False = pending
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     term = models.ForeignKey(Term, on_delete=models.CASCADE)
     exam = models.ManyToManyField(Exams, through='studentgrades')
     semester = models.IntegerField()
-    application_date = models.DateField(default=datetime.date.today)
+    application_date = models.DateField(default=datetime.date.today())
 
     def __str__(self):
         return self.student.student_name + " " + self.exam.exam_title

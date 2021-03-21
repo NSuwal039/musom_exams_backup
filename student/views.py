@@ -105,7 +105,7 @@ def examslist(request):
     student = get_object_or_404(Student, student_id = request.session['user_id'])
     term_id = request.GET.get('term_id')
     term = get_object_or_404(Term, pk=term_id)
-    already_selected = exam_application.objects.filter(student=student)
+    # already_selected = exam_application.objects.filter(student=student)
     selected_subjects=selectedcourses.objects.filter(student_id=student)
     exams = Exams.objects.filter(term = term)
     exams_list=[]

@@ -31,12 +31,12 @@
                 data: {'term_id':term_id},
                 success: function (data) {
                     $("#exams-list").html(data);
+                },
+                error: function(){
+                    alert("Error")
                 }
             })
         })
-
-
-
 
     </script>
 {% endblock %}

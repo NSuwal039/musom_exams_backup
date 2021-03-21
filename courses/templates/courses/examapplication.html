@@ -34,7 +34,9 @@
             url: "{% url 'courses:confirmapplicationAjax' %}",
             data: {'form_id':form_id},
             success: function(data){
-
+            },
+            error: function(){
+                alert("Error")
             }
         })
     })
