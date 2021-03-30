@@ -1,19 +1,15 @@
 from django.db import models
 from django.db.models.deletion import CASCADE
+from django.db.models.fields import CharField
 from teacher.models import Teacher
 from student.models import Student
 import datetime
+from django.utils import timezone
 
-# Create your models here.
 YEAR_CHOICES = [(r,r) for r in range(1990, datetime.date.today().year+1)]
-EXAM_CHOICES = [("REG","Regular"),
-                ("CHA","Chance")]
-# TERM_CHOICES=[("MID", "Mid Term"), ("FIN","Final Term")]
-# FORM_STATUS =   [("APL", "Applied"),
-#                 ("PEN", "Pending"),
-#                 ("REG", "Registered")]
 
 class Term(models.Model):
+    term_id = models.CharField(max_length=30, primary_key=True)
     year = models.IntegerField(choices=YEAR_CHOICES, default=datetime.datetime.now().year)
     exam_name = models.CharField(max_length=25)
     Start_date = models.DateField()
@@ -21,6 +17,7 @@ class Term(models.Model):
    
     def __str__(self):
        return self.exam_name
+
 
 class Subject(models.Model):
     subject_code = models.CharField(max_length=12, primary_key=True)
@@ -34,14 +31,14 @@ class Subject(models.Model):
 class Exams(models.Model):
     exam_id = models.CharField(max_length=25, primary_key=True)
     term = models.ForeignKey(Term, on_delete=models.CASCADE)
-    exam_title = models.CharField(max_length=25, )
+    exam_title = models.CharField(max_length=25)
     subject_id = models.ForeignKey(Subject, on_delete=models.CASCADE)
     exam_format = models.CharField(max_length=6, )
     date = models.DateField()
     time = models.TimeField()
     full_marks = models.IntegerField(default=100)
     pass_marks = models.IntegerField(default=40)
-    exam_centre = models.CharField(max_length=30, )
+    exam_centre = models.CharField(max_length=30,)
 
     def __str__(self):
         return  self.exam_title 
@@ -53,10 +50,8 @@ class application_form(models.Model):
     term = models.ForeignKey(Term, on_delete=models.CASCADE)
     exam = models.ManyToManyField(Exams, through='studentgrades')
     semester = models.IntegerField()
-    application_date = models.DateField(default=datetime.date.today())
+    application_date = models.DateField(default=timezone.now)
 
-    def __str__(self):
-        return self.student.student_name + " " + self.exam.exam_title
     
     def save(self, *args, **kwargs):
         self.semester = self.student.semester
@@ -65,12 +60,9 @@ class application_form(models.Model):
 class studentgrades(models.Model):
     exam_id = models.ForeignKey(Exams, on_delete=models.CASCADE)
     application_id = models.ForeignKey(application_form, on_delete=models.CASCADE)
-    marks = models.IntegerField()
+    marks = models.IntegerField(default=0)
     passed = models.BooleanField()
-    exam_type = models.CharField(
-        max_length=10,
-        choices=EXAM_CHOICES
-    )
+    exam_type = models.BooleanField() #True=Regular, False=Chance
 
     def __str__(self):
         return self.application_id.student.student_name + " " + self.exam_id.exam_title
@@ -78,8 +70,6 @@ class studentgrades(models.Model):
     def save(self, *args, **kwargs):
         self.passed = True if self.marks>self.exam_id.pass_marks else False
         super().save(*args, **kwargs)
-
-
 
 class selectedcourses(models.Model):
     student_id = models.ForeignKey(Student,  on_delete=models.CASCADE, related_name='course_student')
