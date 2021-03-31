@@ -14,7 +14,7 @@ urlpatterns=[
     path('submitscores', views.submitscores, name='submitscores'),
     path('confirmexamapplication', views.confirmexamapplication, name='confirmexamapplication'),
     path('studentmarksentry/<str:id>', views.studentsmarksentry, name='studentmarksentry'),
+    path('confirmapplication', views.confirmapplication, name='confirmapplication'),
     path('ajax/studentlist', views.studentsAjax, name='studentlist'),
     path('ajax/confirmAjax', views.confirmAjax, name='confirmAjax'),
-    path('ajax/confirmapplicationAjax', views.confirmapplicationAjax, name='confirmapplicationAjax'),
 ]

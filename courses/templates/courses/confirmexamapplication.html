@@ -11,6 +11,19 @@
     
 </form>
 <div id="application-list">
+    <table class="table table-hover">
+        <thead class="thead thead-dark">
+            <tr>
+                <td></td>
+                <td>Form id</td>
+                <td>Student</td>
+                <td>Term</td>
+                <td>Subject</td>
+                <td>Date</td>
+                <td>Status</td>
+            </tr>
+        </thead>
+    </table>
 </div>
 {% endblock %}
 
@@ -19,13 +32,18 @@
         $("#form-confirm-button").click(function(event){
             var form_id = $("#application_id").val()
 
-            $.ajax({
-                url: " {% url 'courses:confirmAjax' %}",
-                data: {'form_id':form_id},
-                success: function(data){
-                    $("#application-list").html(data)
-                }
-            })
+            if(form_id==""){
+                alert("Please enter form id.")
+            }else{
+                $.ajax({
+                    url: " {% url 'courses:confirmAjax' %}",
+                    data: {'form_id':form_id},
+                    success: function(data){
+                        $("#application-list").html(data)
+                    }
+                })
+            }
+
         })
     </script>
 {% endblock %}

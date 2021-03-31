@@ -121,20 +121,29 @@ def confirmexamapplication(request):
 
 def confirmAjax(request):
     form_id = request.GET.get('form_id')
-    form = application_form.objects.filter(Q(form_id=form_id),Q(application_id__status="APL"))
+    form = application_form.objects.filter(Q(application_id__icontains=form_id),Q(status=False))
+    print(form)
     return render(request, 'courses/examapplication.html', {'form':form})
 
-def confirmapplicationAjax(request):
-    form_id = request.GET.get('form_id')
-    forms = application_form.objects.filter(form_id=form_id)
+# def confirmapplicationAjax(request):
+#     form_id = request.GET.get('form_id')
+#     forms = application_form.objects.filter(form_id=form_id)
 
-    for item in forms:
-        editobject = item
-        editobject.application_id.status='REG'
-        gradesobject = studentgrades(student_id=item.application_id.student, exam_id= item.application_id.exam,
-                    semester= item.application_id.student.semester, marks=-1, exam_type= item.application_id.exam_type)
-        editobject.application_id.save() 
-        gradesobject.save()
+#     for item in forms:
+#         editobject = item
+#         editobject.application_id.status='REG'
+#         gradesobject = studentgrades(student_id=item.application_id.student, exam_id= item.application_id.exam,
+#                     semester= item.application_id.student.semester, marks=-1, exam_type= item.application_id.exam_type)
+#         editobject.application_id.save() 
+#         gradesobject.save()
     
-    return JsonResponse({'a':"success"})
-        
+#     return JsonResponse({'a':"success"})
+
+def confirmapplication(request):
+    app_id = request.GET.get('application_radio')
+    application = get_object_or_404(application_form, pk=app_id)
+    application.status=True
+    application.save()
+    
+    messages.success(request, "Registration confirmed.")
+    return HttpResponseRedirect(reverse('courses:index'))
