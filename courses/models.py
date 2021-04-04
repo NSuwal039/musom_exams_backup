@@ -12,8 +12,8 @@ class Term(models.Model):
     term_id = models.CharField(max_length=30, primary_key=True)
     year = models.IntegerField(choices=YEAR_CHOICES, default=datetime.datetime.now().year)
     exam_name = models.CharField(max_length=25)
-    Start_date = models.DateField()
-    End_date = models.DateField()
+    start_date = models.DateField()
+    end_date = models.DateField()
    
     def __str__(self):
        return self.exam_name
@@ -60,7 +60,7 @@ class application_form(models.Model):
 class studentgrades(models.Model):
     exam_id = models.ForeignKey(Exams, on_delete=models.CASCADE)
     application_id = models.ForeignKey(application_form, on_delete=models.CASCADE)
-    marks = models.IntegerField(default=0)
+    marks = models.IntegerField(default=-1)
     passed = models.BooleanField()
     exam_type = models.BooleanField() #True=Regular, False=Chance
 

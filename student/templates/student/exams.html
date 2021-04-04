@@ -11,7 +11,7 @@
         {%for exam in exams%}
             <tr><td>{{ exam.exam_id.exam_title}}</td>
             <td>{{ exam.exam_id.date}} {{ exam.exam_id.time}}</td>
-            <td>{{ exam.exam_id.room}}</td></tr>
+            <td>{{ exam.exam_id.exam_centre}}</td></tr>
         {% endfor %}
     </table>
 {% endif %}

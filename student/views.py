@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 import json
 from typing import ContextManager
 from django.db.models import fields
@@ -64,10 +64,51 @@ def registerexam(request):
         return HttpResponseRedirect(reverse('student:index'))
 
 def examapplication(request):
-    # form = ExamApplicationForm
     student = get_object_or_404(Student, student_id = request.session['user_id'])
-    terms = Term.objects.all
-    return render(request, 'student/examapplication.html', {'terms':terms, 'student':student})
+    terms = Term.objects.all()
+    
+    today = datetime.date.today()
+    term=Term.objects.none()
+    for term_obj in terms:
+        if (datetime.timedelta(0)<=term_obj.start_date-today<=datetime.timedelta(15)):
+            # print(term_obj.start_date-today)
+            # print(type(term_obj.start_date-today))
+            print(term_obj.__str__() + ": Yes\n")
+            term=term_obj
+        else:
+            # print(term_obj.start_date-today)
+            print(term_obj.__str__() + ": No\n")
+    
+    if(term):
+        selected_subjects= selectedcourses.objects.filter(Q(student_id=student)&Q(semester=student.semester))
+        print(selected_subjects)
+        exams=[]
+
+        for subject in selected_subjects:
+            try:
+                exams.append(Exams.objects.get(Q(term=term)&Q(subject_id=subject.subject_id)))
+            except:
+                print(subject.__str__() + " exam not found")
+        print(exams)
+    else:
+        print("nothing")
+
+    return render(request, 'student/examapplication.html', {'student':student, 'term':term, 'exams':exams})
+
+def examslist(request):
+    student = get_object_or_404(Student, student_id = request.session['user_id'])
+    term_id = request.GET.get('term_id')
+    term = get_object_or_404(Term, pk=term_id)
+    selected_subjects=selectedcourses.objects.filter(student_id=student)
+    exams = Exams.objects.filter(term = term)
+    exams_list=[]
+
+    for subject in selected_subjects:
+        exam_item = exams.filter(subject_id=subject.subject_id)
+        if exam_item.exists():
+            exams_list.append(exam_item.last())
+   
+    return render(request, 'student/examslist.html', {'exams':exams_list, 'term':term})
     
 def examdetails(request):
     student = get_object_or_404(Student, student_id = request.session['user_id'])
@@ -92,31 +133,17 @@ def postCourses(request):
 def postGrades(request):
     student = get_object_or_404(Student, student_id = request.session['user_id'])
     semester = request.GET.get('semester')
-    grades_data =  studentgrades.objects.all().filter(application_id__student_id=student).filter(semester=semester).exclude(marks=-1)
-    remaining = studentgrades.objects.all().filter(application_id__student_id=student).filter(semester=semester).filter(marks=-1)
+    grades_data =  studentgrades.objects.filter(application_id__student_id=student).filter(application_id__semester=semester).exclude(marks=-1)
+    remaining = studentgrades.objects.filter(application_id__student_id=student).filter(application_id__semester=semester).filter(marks=-1)
     context = {'records':grades_data, 'remaining':remaining}
     return render(request, 'student/grades.html', context)
 
 def postExams(request):
     student = get_object_or_404(Student, student_id = request.session['user_id'])
     semester = request.GET.get('semester')
-    exams_data = studentgrades.objects.all().filter(student_id = student).filter(semester=semester)
+    exams_data = studentgrades.objects.all().filter(application_id__student_id = student).filter(application_id__semester=semester)
     return render(request, 'student/exams.html', {'exams': exams_data})
 
-def examslist(request):
-    student = get_object_or_404(Student, student_id = request.session['user_id'])
-    term_id = request.GET.get('term_id')
-    term = get_object_or_404(Term, pk=term_id)
-    selected_subjects=selectedcourses.objects.filter(student_id=student)
-    exams = Exams.objects.filter(term = term)
-    exams_list=[]
-
-    for subject in selected_subjects:
-        exam_item = exams.filter(subject_id=subject.subject_id)
-        if exam_item.exists():
-            exams_list.append(exam_item.last())
-   
-    return render(request, 'student/examslist.html', {'exams':exams_list, 'term':term})
 
 def testexamAjax(request):
     student = get_object_or_404(Student, student_id = request.session['user_id'])
@@ -215,21 +242,21 @@ def student_application(request):
     i=0
 
     app_obj = application_form(application_id=app_id, student=student, term=term, semester=student.semester)
-    # app_obj.save()
 
-    while(i<count):
-        exams.append(get_object_or_404(Exams, pk=request.POST[str(i)]))
-        i+=1
-    
-    for item in exams:
-        app_obj.exam.add(item, through_defaults={'exam_type':True, 'passed':False})
-
-    try:
+    if (application_form.objects.filter(application_id=app_id).exists()):
+        messages.error(request, "You have already applied.")
+        return HttpResponseRedirect(reverse('student:index'))
+    else:
         app_obj.save()
-    except:
-        return HttpResponse("Error")
+
+        while(i<count):
+            exams.append(get_object_or_404(Exams, pk=request.POST[str(i)]))
+            i+=1
     
-    print("Exams: " + "\n" )
-    print(app_obj.exam.all())
-    print("\n" + "------------------------------------------------------------")
-    return HttpResponse(app_obj.exam.all())
+        for item in exams:
+            app_obj.exam.add(item, through_defaults={'exam_type':True, 'passed':False})
+        
+        app_obj.save()
+        
+        messages.success(request, "Application successful.")
+        return HttpResponseRedirect(reverse('student:index'))

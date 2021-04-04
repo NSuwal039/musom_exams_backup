@@ -32,8 +32,8 @@
     {% if messages %}
         {% for message in messages %}
             $(window).on('load', function() {
-            $('#exampleModal').modal('show');
-            $('#message_text').text('{{message}}')
+              $('#exampleModal').modal('show');
+              $('#message_text').text('{{message}}')
             }); 
         {% endfor %}   
     {% endif %}
