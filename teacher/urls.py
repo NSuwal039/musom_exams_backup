@@ -12,4 +12,5 @@ urlpatterns=[
     path('login', views.login, name = "login"),
     path('studentlist', views.studentlist, name='studentlist'),
     path('ajax/studentlist', views.examsAjax, name='examsAjax'),
+    path('ajax/loadExamsAjax', views.loadExamsAjax, name='loadExamsAjax'),
 ]

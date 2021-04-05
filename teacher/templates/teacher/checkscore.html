@@ -13,19 +13,29 @@
     <hr>
 
     {% if code == 1%}
-    {% if students %}
-        <table class ="table table-hover">
-            
+        {% if students %}
+            <table class ="table table-hover">
             <thead class="thead-dark"><th colspan="2">{{selected_exam.exam_title}}</th></thead>
-        {% for students in students%}
-        <tr>
-        <td>{{ students.student_id.student_name}}</td> <td>{{ students.marks}}</td>
-        </tr>
-        {%endfor%}
-        </table>
-    {% else %}
-    <h4>There are no records for the selected exam.</h4>
-    {% endif %}
+            {% for students in students%}
+            <tr>
+            <td>{{ students.application_id.student}}</td> <td>{{ students.marks}}</td>
+            </tr>
+            {%endfor%}
+            </table>
+        {% else %}
+            <h4>There are no records for the selected exam.</h4>
+        {% endif %}
+
+        {% if remaining %}
+        <hr>
+            <h4>These students are yet to be graded:</h4><br>
+            <ol type="1">
+                {% for student in remaining %}
+                    <li>{{student.application_id.student}}<br></li>
+                {% endfor %}
+            </ul>
+        {% else %}
+        {% endif %}
     {% endif %}
 {% endblock %}
 

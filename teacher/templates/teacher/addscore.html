@@ -1,19 +1,26 @@
 {% extends 'teacher_base.html' %}
 {% block content %}
-<h4>Select exam to mark:</h4>
-    <!-- <form action="{% url 'teacher:subscore'%}" id="exam_form"> -->
-    <form id="exam_form">
-    <select name = 'exam' id="exam_select">
-    {% for exam in exams%}
-        <option name="sub" value="{{exam.exam_id}}">{{exam.exam_title}}</option>
-    {%endfor%}
+<h3>Select examination term:</h3>
+<form id="term_form">
+    <select name="term" id="term_select">
+        {% for term in terms%}
+            <option name="term_option" value="{{term.pk}}">{{term}}</option>
+        {% endfor%}
     </select>
     <input type="submit" value="Confirm">
-    </form>
+</form>
+<hr>
+<div id="exams_select_div" hidden>
+    <h3>Select exam to mark:</h3>    
+    <form id="exam_form">
+        <select name = 'exam' id="exam_select">
     
+        </select>
+        <input type="submit" value="Confirm">
+    </form>
     <div id="entryfield">
-
     </div>
+</div>
 {% endblock %}    
     
 {% block title%} | Select course{% endblock %}
@@ -34,5 +41,19 @@
         })
     })
     
+    $("#term_form").submit(function(event){
+        event.preventDefault();
+        term_id=$("#term_select").val();
+        
+        $.ajax({
+            url: "{% url 'teacher:loadExamsAjax' %}",
+            data: {'term_id':term_id},
+            success: function(data){
+                $("#exams_select_div").removeAttr('hidden')
+                $("#exam_select").html(data)
+            }
+        })
+        
+    })
 </script>
 {% endblock %}

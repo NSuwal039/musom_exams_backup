@@ -1,23 +1,33 @@
+{% if students%}
+    <hr>
+    Please enter the score for the respective students.<br>
+        <hr>
+        <h4>Exam = {{exam.exam_title}}</h4>
+        <hr>
+        <form action="{% url 'teacher:submitscore' %}">
+            <input type="hidden" name="exam_id" value="{{exam.exam_id}}">
+            <table class="table table-hover">
+
+            {% for stu in students%}
+                <tr>
+                    <td> {{stu.application_id.student.student_name}}</td>
+                    <td> <input type="number" min="0" max="100" name="{{stu.application_id.student.student_id}}" style="width: 150px; text-align: right; " 
+                        {% if stu.marks == -1 %}
+                            placeholder="ungraded"
+                        {% else %} 
+                            placeholder="{{stu.marks}}"
+                        {% endif %}
+                        ></td>
+                </tr>
+            {%endfor%}
+
+            <tr><td colspan="2" align="center"><input type="submit">
+            </td></tr>
+            
+        </table>
+        </form>
+        <hr>
+{% else %}
 <hr>
-Please enter the score for the respective students.<br>
-    <hr>
-    <h4>Exam = {{exam.exam_title}}</h4>
-    <hr>
-    <form action="{% url 'teacher:submitscore' %}" method="POST">
-        <input type="hidden" name="exam_id" value="{{exam.exam_id}}">
-        {%csrf_token%}
-    <table class="table table-hover">
-
-        {% for stu in students%}
-            <tr>
-                <td> {{stu.student_id.student_name}}</td>
-                <td> <input type="number" placeholder="Score" min="0" max="100" name="{{stu.student_id.student_id}}"></td>
-            </tr>
-        {%endfor%}
-
-        <tr><td colspan="2" align="center"><input type="submit">
-        </td></tr>
-        
-    </table>
-    </form>
-    <hr>
+    There are no students that have appeared in this exam yet.
+{% endif %}
