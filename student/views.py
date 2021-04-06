@@ -133,8 +133,8 @@ def postCourses(request):
 def postGrades(request):
     student = get_object_or_404(Student, student_id = request.session['user_id'])
     semester = request.GET.get('semester')
-    grades_data =  studentgrades.objects.filter(application_id__student_id=student).filter(application_id__semester=semester).exclude(marks=-1)
-    remaining = studentgrades.objects.filter(application_id__student_id=student).filter(application_id__semester=semester).filter(marks=-1)
+    grades_data = studentgrades.objects.filter( Q(application_id__student_id=student) & Q(application_id__semester=semester) & ~Q(marks=-1))
+    remaining = studentgrades.objects.filter( Q(application_id__student_id=student) & Q(application_id__semester=semester) & Q(marks=-1))
     context = {'records':grades_data, 'remaining':remaining}
     return render(request, 'student/grades.html', context)
 
@@ -231,7 +231,7 @@ def printform(request):
         'student':student,
         'exams': exams
     }
-    return render(request, 'student/printform.html', context)
+    return render(request, 'student/print_form.html', context)
 
 def student_application(request):
     student = get_object_or_404(Student, student_id = request.session['user_id'])
@@ -258,5 +258,11 @@ def student_application(request):
         
         app_obj.save()
         
-        messages.success(request, "Application successful.")
+        messages.success(request, "Application successful. Check the sidebar to print admit card and application form")
         return HttpResponseRedirect(reverse('student:index'))
+
+def printresults(request):
+    return render (request, 'student/print_results.html')
+
+def printadmitcard(request):
+    return render (request, 'student/print_admitcard.html')

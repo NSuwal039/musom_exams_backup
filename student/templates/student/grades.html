@@ -10,6 +10,14 @@
             <td>{{ records.marks}}</td>
         </tr>
         {% endfor %}
+        {% if not remaining %}
+        <tr align="right">
+            <td colspan=2>
+                <a href="{% url 'student:printresults' %}" class="btn btn-primary">Print results</button>
+            </td>
+        </tr>
+        {% else %}
+        {% endif %}
     </table>
 <hr>
 {% else %}

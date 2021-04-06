@@ -8,7 +8,7 @@
         <tr style=" text-align: center"><th>Student Name</th>
         <th>Marks</th></tr></thead>
         {% for result in results%}
-            <tr><td style="width: 50%; text-align: center">{{result.student_id.student_name}}</td>
+            <tr><td style="width: 50%; text-align: center">{{result.application_id.student.student_name}}</td>
             <td style="width: 50%; text-align: center">{{result.marks}}</td>
             </tr>
         {% endfor%}

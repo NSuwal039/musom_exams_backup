@@ -68,6 +68,12 @@ class studentgrades(models.Model):
         return self.application_id.student.student_name + " " + self.exam_id.exam_title
     
     def save(self, *args, **kwargs):
+        if self.marks>100:
+            self.marks=100
+
+        if self.marks<-1:
+            self.marks=-1
+            
         self.passed = True if self.marks>self.exam_id.pass_marks else False
         super().save(*args, **kwargs)
 
