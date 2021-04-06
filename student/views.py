@@ -231,7 +231,7 @@ def printform(request):
         'student':student,
         'exams': exams
     }
-    return render(request, 'student/printform.html', context)
+    return render(request, 'student/print_form.html', context)
 
 def student_application(request):
     student = get_object_or_404(Student, student_id = request.session['user_id'])
@@ -260,3 +260,9 @@ def student_application(request):
         
         messages.success(request, "Application successful.")
         return HttpResponseRedirect(reverse('student:index'))
+
+def printresults(request):
+    return render (request, 'student/print_results.html')
+
+def printadmitcard(request):
+    return render (request, 'student/print_admitcard.html')
