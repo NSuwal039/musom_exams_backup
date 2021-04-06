@@ -32,15 +32,21 @@
     {% if messages %}
         {% for message in messages %}
             $(window).on('load', function() {
-              $('#exampleModal').modal('show');
-              $('#message_text').text('{{message}}')
+              $('#messageModal').modal('show');
+              {% if 'safe' in message.tags %}
+              $('#message_text').html('{{message|safe}}');
+              {% else %}
+              $('#message_text').html("{{message}}");
+              {% endif %}
+
+              
             }); 
         {% endfor %}   
     {% endif %}
 </script>
 
 <!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">

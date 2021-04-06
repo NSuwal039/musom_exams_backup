@@ -7,7 +7,7 @@
         <hr>
         Subjects available this term:
 
-        <form  action=" {% url 'student:printform' %}" method="POST">
+        <form  action=" {% url 'student:viewform' %}" method="POST">
             {%csrf_token%}
               <table class="table table-hover">
                   <thead class="thead thead-dark">
@@ -67,7 +67,7 @@
     
 {% endblock %}
 
-{% block javascript %}
+<!-- {% block javascript %}
     <script>
         
         $("#terms-form").submit(function(event){
@@ -88,4 +88,4 @@
         })
 
     </script>
-{% endblock %}
+{% endblock %} -->

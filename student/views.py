@@ -1,4 +1,5 @@
 import datetime
+from datetime import datetime as date1
 import json
 from typing import ContextManager
 from django.db.models import fields
@@ -7,10 +8,10 @@ from django.shortcuts import redirect, render, get_object_or_404
 from student.models import Student
 from courses.models import Exams, application_form, studentgrades, Subject, selectedcourses, Term
 from django.urls import reverse
-from django.core import serializers
 from django.http import JsonResponse
 from django.contrib import messages
 from django.db.models import Q
+from django.utils.html import format_html
 
 
 student = Student.objects.none()
@@ -204,7 +205,7 @@ def confirmAjax(request):
     student_object = student
     course_object = get_object_or_404(Subject, subject_code = course_code)
 
-    to_add = selectedcourses (subject_id=course_object, student_id=student_object, year = datetime.now().year, semester=student_object.semester)
+    to_add = selectedcourses (subject_id=course_object, student_id=student_object, year = date1.now().year, semester=student_object.semester)
     to_add.save() 
     # messages.success(request, 'Course ' + course_object.subject_name + ' added.')
     # return redirect('student:addcourse')
@@ -213,7 +214,7 @@ def confirmAjax(request):
 def login(request):
     return render(request, 'student/login.html')
 
-def printform(request):
+def viewform(request):
     student = get_object_or_404(Student, student_id = request.session['user_id'])
     term = get_object_or_404(Term, pk=request.POST['term'])
     count = int(request.POST['count'])
@@ -231,7 +232,7 @@ def printform(request):
         'student':student,
         'exams': exams
     }
-    return render(request, 'student/print_form.html', context)
+    return render(request, 'student/view_form.html', context)
 
 def student_application(request):
     student = get_object_or_404(Student, student_id = request.session['user_id'])
@@ -244,7 +245,11 @@ def student_application(request):
     app_obj = application_form(application_id=app_id, student=student, term=term, semester=student.semester)
 
     if (application_form.objects.filter(application_id=app_id).exists()):
-        messages.error(request, "You have already applied.")
+        # messages.error(request, 'You have already applied.')
+        url='{% url "student:checkscore" %}'
+        # messages.error(request, 'Application failed. Go to <a href="{% url \'student:checkscore\' %}">link</a>', extra_tags='safe')
+        # messages.error(request, f'Application failed. Go to <a href={url}>link</a>', extra_tags='safe')
+        messages.error(request, 'Application successful. Go to <a href="home">link</a>', extra_tags='safe')
         return HttpResponseRedirect(reverse('student:index'))
     else:
         app_obj.save()
@@ -258,11 +263,14 @@ def student_application(request):
         
         app_obj.save()
         
-        messages.success(request, "Application successful.")
+        messages.success(request, 'Application successful. Go to <a href="home.html">link</a>', extra_tags='safe')
         return HttpResponseRedirect(reverse('student:index'))
 
 def printresults(request):
     return render (request, 'student/print_results.html')
 
 def printadmitcard(request):
-    return render (request, 'student/print_admitcard.html')
+    student = get_object_or_404(Student, student_id = request.session['user_id'])
+
+    context={'student':student}
+    return render (request, 'student/print_admitcard.html', context)
