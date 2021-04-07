@@ -14,6 +14,7 @@ class Term(models.Model):
     exam_name = models.CharField(max_length=25)
     start_date = models.DateField()
     end_date = models.DateField()
+    exam_centre = models.CharField(max_length=30)
    
     def __str__(self):
        return self.exam_name
@@ -38,7 +39,6 @@ class Exams(models.Model):
     time = models.TimeField()
     full_marks = models.IntegerField(default=100)
     pass_marks = models.IntegerField(default=40)
-    exam_centre = models.CharField(max_length=30,)
 
     def __str__(self):
         return  self.exam_title 

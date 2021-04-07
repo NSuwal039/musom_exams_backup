@@ -1,4 +1,129 @@
 {% extends 'student_base.html' %}
 {% block content %}
-TEST
+<div class="invoice p-3 mb-3" id="application_form">
+    <!-- title row -->
+    <div class="row">
+        <div class="col-2">
+            <h4>
+                <i class="fas fa-globe"></i> Logo
+        </div>
+
+        <div class="col-8">
+            <h5 class="text-center">
+                Mid-Western University
+            </h5>
+
+            <h4 class="text-center">
+                Examinations Management Office
+            </h4>
+
+            <h6 class="text-center">
+                Surkhet, Nepal
+            </h6>
+
+            <h5 class="text-center">
+                Examination Admission Card
+            </h5>
+            
+        </div>
+
+        <div class="col-2">
+            <h4 class="text-center">
+                <i class="fas fa-globe"></i> Photo
+            </h4>
+        </div>
+          
+        </h4>
+      
+      <!-- /.col -->
+    </div>
+    <!-- info row -->
+
+    <div class="row row1-info">
+        <div class="col-7 row1-col">
+          Full Name:
+        </div>
+
+        <div class="col-5 row1-col">
+            Symbol no.:
+        </div>
+    </div>
+
+    <div class="row row2-info">
+        <div class="col-7 row2-col">
+            Form Serial No:
+        </div>
+        
+        <div class="col-5 row2-col">
+            Name of campus:
+          </div>
+    </div>
+
+    <div class="row row3-info">
+      <div class="col-7 row3-col">
+        Faculty:
+      </div>
+
+      <div class="col-5 row3-col">
+        Exam Year:
+        </div>
+    </div>
+
+    <div class="row row4-info">
+        <div class="col-7 row4-col">
+          Level:
+        </div>
+  
+        <div class="col-5 row4-col">
+          Exam Centre:
+          </div>
+      </div>
+
+
+    <div class="row row5-info">
+        <div class="col-4 row5-col">
+            Semester:
+        </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12 table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+                <th>S.N.</th>
+                <th>Exam Code</th>
+                <th>Subject</th>
+                <th>Regular/Chance</th>
+            </tr>
+          </thead>
+          <tbody>
+          
+          </tbody>
+        </table>
+      </div>
+      <!-- /.col -->
+    </div>
+    <!-- /.row -->
+
+    
+
+    <!-- this row will not appear when printing -->
+    <div class="row no-print">
+      <div class="col-12">
+        <button class="btn btn-default" id="print_button"><i class="fas fa-print"></i> Print</a></button>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block javascript %}
+  <script>
+      $("#print_button").click(function(event){
+        //event.preventDefault();
+        print();
+      })
+
+  </script>
 {% endblock %}

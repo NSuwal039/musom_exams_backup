@@ -174,12 +174,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     </a>
                   </li>
 
-                  <!-- <li class="nav-item">
-                    <a href="{% url 'student:examapplication' %}" class="nav-link">
+                  <li class="nav-item">
+                    <a href="{% url 'student:printapplicationform' %}" class="nav-link">
                       <i class="far fa-circle nav-icon"></i>
                       <p>Print Application Form</p>
                     </a>
-                  </li> -->
+                  </li>
 
                   <li class="nav-item">
                     <a href="{% url 'student:printadmitcard' %}" class="nav-link">
@@ -249,13 +249,15 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <!-- /.control-sidebar -->
 
   <!-- Main Footer -->
-  <footer class="main-footer">
+  <footer class="main-footer no-print">
     <!-- To the right -->
-    <div class="float-right d-none d-sm-inline">
-      Anything you want
+    <div class="to-hide">
+      <div class="float-right d-none d-sm-inline">
+        Anything you want
+      </div>
+      <!-- Default to the left -->
+      <strong>Copyright &copy; 2014-2020 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights reserved.
     </div>
-    <!-- Default to the left -->
-    <strong>Copyright &copy; 2014-2020 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights reserved.
   </footer>
 </div>
 <!-- ./wrapper -->

@@ -249,7 +249,7 @@ def student_application(request):
         url='{% url "student:checkscore" %}'
         # messages.error(request, 'Application failed. Go to <a href="{% url \'student:checkscore\' %}">link</a>', extra_tags='safe')
         # messages.error(request, f'Application failed. Go to <a href={url}>link</a>', extra_tags='safe')
-        messages.error(request, 'Application successful. Go to <a href="home">link</a>', extra_tags='safe')
+        messages.success(request, 'Application failed. <a href="printapplicationform">Test link</a><br>Or access the page from sidebar.', extra_tags='safe')
         return HttpResponseRedirect(reverse('student:index'))
     else:
         app_obj.save()
@@ -263,7 +263,7 @@ def student_application(request):
         
         app_obj.save()
         
-        messages.success(request, 'Application successful. Go to <a href="home.html">link</a>', extra_tags='safe')
+        messages.success(request, 'Application successful. Print form <a href="printapplicationform">here</a>', extra_tags='safe')
         return HttpResponseRedirect(reverse('student:index'))
 
 def printresults(request):
@@ -274,3 +274,6 @@ def printadmitcard(request):
 
     context={'student':student}
     return render (request, 'student/print_admitcard.html', context)
+
+def printapplicationform(request):
+    return render(request, 'student/print_applicationform.html')

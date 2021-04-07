@@ -14,6 +14,7 @@ urlpatterns=[
     path('viewform', views.viewform, name='viewform'),
     path('print_results', views.printresults, name='printresults'),
     path('print_admitcard', views.printadmitcard, name='printadmitcard'),
+    path('printapplicationform', views.printapplicationform, name='printapplicationform'),
     path('student_application', views.student_application, name='student_application'),
     path('ajax/examslist', views.examslist, name = "examslist"),
     path('ajax/testexamAjax', views.testexamAjax, name = "testexamAjax"),
