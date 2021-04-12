@@ -1,7 +1,6 @@
 import datetime
 from datetime import datetime as date1
 import json
-from typing import ContextManager
 from django.db.models import fields
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render, get_object_or_404
@@ -26,11 +25,8 @@ def index(request):
 
 def checkscore(request):
     student = get_object_or_404(Student, student_id = request.session['user_id'])
-    print(student)
-    grades = studentgrades.objects.all().filter(application_id__student_id=student).exclude(marks=-1)
-    remaining = studentgrades.objects.all().filter(application_id__student_id=student).filter(marks=-1)
     SEM_CHOICES = [(r) for r in range(1, student.semester+1)]
-    return render(request, 'student/checkscore.html', {'student': student, 'grades':grades, 'remaining':remaining, 'semesters':SEM_CHOICES})
+    return render(request, 'student/checkscore.html', {'student': student,'semesters':SEM_CHOICES})
 
 def addcourse(request):
     student = get_object_or_404(Student, student_id = request.session['user_id'])
@@ -70,6 +66,7 @@ def examapplication(request):
     
     today = datetime.date.today()
     term=Term.objects.none()
+
     for term_obj in terms:
         if (datetime.timedelta(0)<=term_obj.start_date-today<=datetime.timedelta(15)):
             # print(term_obj.start_date-today)
@@ -134,8 +131,8 @@ def postCourses(request):
 def postGrades(request):
     student = get_object_or_404(Student, student_id = request.session['user_id'])
     semester = request.GET.get('semester')
-    grades_data =  studentgrades.objects.filter(application_id__student_id=student).filter(application_id__semester=semester).exclude(marks=-1)
-    remaining = studentgrades.objects.filter(application_id__student_id=student).filter(application_id__semester=semester).filter(marks=-1)
+    grades_data =  studentgrades.objects.filter(Q(application_id__student_id=student)&Q(application_id__semester=semester)&~Q(marks=-1))
+    remaining = studentgrades.objects.filter(Q(application_id__student_id=student)&Q(application_id__semester=semester)&Q(marks=-1))
     context = {'records':grades_data, 'remaining':remaining}
     return render(request, 'student/grades.html', context)
 
@@ -144,7 +141,6 @@ def postExams(request):
     semester = request.GET.get('semester')
     exams_data = studentgrades.objects.all().filter(application_id__student_id = student).filter(application_id__semester=semester)
     return render(request, 'student/exams.html', {'exams': exams_data})
-
 
 def testexamAjax(request):
     student = get_object_or_404(Student, student_id = request.session['user_id'])
@@ -266,14 +262,44 @@ def student_application(request):
         messages.success(request, 'Application successful. Print form <a href="printapplicationform">here</a>', extra_tags='safe')
         return HttpResponseRedirect(reverse('student:index'))
 
-def printresults(request):
-    return render (request, 'student/print_results.html')
+def printresults(request, form_id):
+    # student = get_object_or_404(Student, student_id = request.session['user_id'])
+    form = get_object_or_404(application_form, pk=form_id)
+    grades = studentgrades.objects.filter(application_id=form)
+    print(form)
+    context={'form':form,
+            'grades':grades
+             }
+    return render (request, 'student/print_results.html', context)
 
 def printadmitcard(request):
+    latest_term = Term.objects.latest('start_date')
+    print(latest_term)
     student = get_object_or_404(Student, student_id = request.session['user_id'])
 
-    context={'student':student}
-    return render (request, 'student/print_admitcard.html', context)
+    try:
+        application=application_form.objects.get(Q(term=latest_term)&Q(student=student)&Q(status=True))
+        grades = studentgrades.objects.filter(application_id=application)
+        context={'student':student, 'form':application, 'grades':grades}
+        print("True")
+        return render (request, 'student/print_admitcard.html', context)
+    except:
+        print("False")
+        return render (request, 'student/print_admitcard.html')
+    
 
 def printapplicationform(request):
-    return render(request, 'student/print_applicationform.html')
+    latest_term = Term.objects.latest('start_date')
+    print(latest_term)
+    student = get_object_or_404(Student, student_id = request.session['user_id'])
+
+    try:
+        # application=application_form.objects.get(Q(term=latest_term)&Q(student=student)&Q(status=True))
+        application=application_form.objects.get(Q(term=latest_term)&Q(student=student))
+        grades = studentgrades.objects.filter(application_id=application)
+        context={'student':student, 'form':application, 'grades':grades}
+        print("True")
+        return render (request, 'student/print_applicationform.html', context)
+    except:
+        print("False")
+        return render (request, 'student/print_applicationform.html')

@@ -11,15 +11,17 @@ YEAR_CHOICES = [(r,r) for r in range(1990, datetime.date.today().year+1)]
 class Term(models.Model):
     term_id = models.CharField(max_length=30, primary_key=True)
     year = models.IntegerField(choices=YEAR_CHOICES, default=datetime.datetime.now().year)
-    exam_name = models.CharField(max_length=25)
+    term_name = models.CharField(max_length=25)
     start_date = models.DateField()
     end_date = models.DateField()
     exam_centre = models.CharField(max_length=30)
    
+    
+    def get_latest(self):
+        return self.latest('start_date')
+    
     def __str__(self):
-       return self.exam_name
-
-
+        return self.term_name
 class Subject(models.Model):
     subject_code = models.CharField(max_length=12, primary_key=True)
     subject_name = models.CharField(max_length=25)

@@ -22,8 +22,11 @@
             </h6>
 
             <h5 class="text-center">
-                Examination Application Form
+              {{term}}
             </h5>
+            <h6 class="text-center">
+                Grade Sheet
+            </h6>
             
         </div>
 
@@ -38,71 +41,98 @@
       <!-- /.col -->
     </div>
     <!-- info row -->
-    <div class="row student-info">
-      <div class="col-12 student-col">
-        Faculty:
-      </div>
-    </div>
 
-    <div class="row college-info">
-      <div class="col-12 college-col">
-        Name of campus:
-      </div>
-    </div>
-
-    <div class="row level-info">
-        <div class="col-4 level-col">
-            Level:
+    <div class="row row1-info">
+        <div class="col-7 row1-col">
+          <strong>Name:</strong>  {{form.student.student_name}}
         </div>
 
-        <div class="col-4 level-col">
-            Semester:
+        <div class="col-5 row1-col">
+          <strong>Symbol no.:</strong> {{form.student.student_id}}
         </div>
+    </div>
 
-        <div class="col-4 level-col">
-            Exam Centre:
+    <div class="row row2-info">
+        <div class="col-7 row2-col">
+          <strong>Form Serial No.:</strong> {{form.application_id}}
+        </div>
+        
+        <div class="col-5 row2-col">
+          <strong>Campus/School: </strong>
+          </div>
+    </div>
+
+    <div class="row row3-info">
+      <div class="col-7 row3-col">
+        <strong>Faculty: </strong>
+      </div>
+
+      <div class="col-5 row3-col">
+        <strong>Exam Year: </strong>{{form.term.year}}
         </div>
     </div>
 
     <div class="row row4-info">
-        <div class="col-4 row4-col">
-            Form Serial No:
+        <div class="col-7 row4-col">
+          <strong>Level: </strong>
         </div>
+  
+        <div class="col-5 row4-col">
+          <strong>Exam Centre: </strong>{{form.term.exam_centre}}
+          </div>
+      </div>
 
-        <div class="col-4 row4-col">
-            Sex:
-        </div>
-    </div>
-    
+
     <div class="row row5-info">
-        <div class="col-12 row5-col">
-          Student id:
+        <div class="col-4 row5-col">
+          <strong>Semester: </strong>{{form.semester}}
         </div>
     </div>
 
-    <div class="row row6-info">
-        <div class="col-12 row6-col">
-          Full Name:
-        </div>
-    </div>
-
-    
-    <!-- /.row -->
-
-    <!-- Table row -->
     <div class="row">
       <div class="col-12 table-responsive">
         <table class="table table-striped">
-          <thead>
+          <thead class="thead thead-dark">
             <tr>
                 <th>S.N.</th>
                 <th>Exam Code</th>
                 <th>Subject</th>
+                <th>Marks</th>
                 <th>Regular/Chance</th>
             </tr>
           </thead>
           <tbody>
-          
+            {% for exam in form.exam.all %}
+              <tr>
+                <td>
+                  {{forloop.counter}}
+                </td>
+                <td>
+                  {{exam.exam_id}}
+                </td>
+                <td>
+                  {{exam.subject_id.subject_name}}
+                </td>
+                <td>
+                  {% for grade in grades %}
+                    {% if grade.exam_id == exam%}
+                      {{grade.marks}}
+                    {% endif %}
+                  {% endfor%}
+                </td>
+                <td>
+                  {% for grade in grades %}
+                    {% if grade.exam_id == exam%}
+                      {% if grade.exam_type == True %}
+                        Regular
+                      {% else %}
+                        Chance
+                      {% endif %}
+                    {% endif %}
+                  {% endfor%}
+                </td>
+              </tr>
+            {% endfor %}
           </tbody>
         </table>
       </div>
@@ -126,9 +156,7 @@
   <script>
       $("#print_button").click(function(event){
         //event.preventDefault();
-        $(".to-hide").toggle();
         print();
-        $(".to-hide").toggle();
       })
 
   </script>
