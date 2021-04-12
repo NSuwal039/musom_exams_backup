@@ -1,11 +1,13 @@
 from django.contrib import messages
 from django.db.models.query import QuerySet
-from django.http.response import HttpResponseRedirect
+from django.http.response import HttpResponseRedirect, JsonResponse
+from django.http.response import HttpResponse
 from django.shortcuts import render, get_object_or_404
-from courses.models import Term, studentgrades, Exams, Subject, selectedcourses
+from courses.models import Term, application_form, studentgrades, Exams, Subject, selectedcourses
 from .models import Teacher 
 from student.models import Student
 from django.urls import reverse
+import csv, io
 from django.db.models import Q
 
 
@@ -101,5 +103,39 @@ def loadExamsAjax(request):
     subject = Subject.objects.all().filter(teacher_id=teacher)
     exams = Exams.objects.all().filter(Q(subject_id__in=subject) & Q(term=term))
     return render(request, 'teacher/examslist.html', {'exams':exams})
+
+def exportcsv(request, exam_id):
+    selected_exam = get_object_or_404(Exams, exam_id=exam_id)
+    student_data = studentgrades.objects.all().filter(exam_id=selected_exam)
+    student_data = studentgrades.objects.all().filter(exam_id=selected_exam)
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename= "results.csv"'
+
+    writer = csv.writer(response, delimiter=",")
+    writer.writerow(['exam_id','application_id', 'name','marks','exam_type'])
+
+    for obj in student_data:
+        writer.writerow([obj.exam_id.exam_id, obj.application_id.application_id,obj.application_id.student.student_name, "", obj.exam_type])
     
+    return response
+
+def uploadcsv(request):
+    csv_file = request.FILES['file']
+
+    if not csv_file.name.endswith('.csv'):
+        messages.error(request, "Invalid file")
+    
+    data_set = csv_file.read().decode('UTF-8')
+    io_string = io.StringIO(data_set)
+    next(io_string)
+
+    for column in csv.reader(io_string, delimiter=',', quotechar="|"):
+            gradeobj = get_object_or_404(studentgrades, exam_id=column[0], application_id=column[1])
+            gradeobj.marks=int(column[3])
+            gradeobj.save()
+    
+    messages.success(request,"Marks upload successful")
+    return HttpResponseRedirect(reverse('teacher:index'))
+
         

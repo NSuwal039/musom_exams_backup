@@ -21,13 +21,41 @@
                 </tr>
             {%endfor%}
 
-            <tr><td colspan="2" align="center"><input type="submit">
-            </td></tr>
+            <tr><td colspan="2" align="center" ><button class="btn btn-primary" type="submit"> Submit</button></td>
+            </form>
+            </tr>
+            <tr>
+                <td colspan="2" align="center"> 
+                    <a href="{% url 'teacher:exportcsv' exam.exam_id %}"><button type="button" class="btn btn-primary" id="export_csv">Upload by csv instead</button></a>
+                </td>
+                </tr>
+                <tr>
+                <td colspan="2" align="center" id="uploadcsv"> 
+                    <form method="POST" action="{% url 'teacher:uploadcsv' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="file" name="file">
+                        <button class="btn btn-primary">Upload csv</button>
+                    </form>
+                </td>
+                
+            </tr>
             
         </table>
-        </form>
+        
         <hr>
 {% else %}
 <hr>
     There are no students that have appeared in this exam yet.
 {% endif %}
+
+{% block javascript %}
+    <script>
+        $(document).ready(function() {
+            $("#uploadcsv").hide();
+        });
+
+        $("#export_csv").click(function(event){
+            $("#uploadcsv").show();
+        })
+    </script>
+{% endblock %}
