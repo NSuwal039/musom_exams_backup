@@ -1,5 +1,6 @@
 {% extends 'student_base.html' %}
 {% block content %}
+{% if form %}
 <div class="invoice p-3 mb-3" id="application_form">
     <!-- title row -->
     <div class="row">
@@ -139,6 +140,10 @@
     </div>
   </div>
 
+  {% else %}
+    <h4>There are no exams you have applied for.</h4>
+  {% endif %}
+
 {% endblock %}
 
 {% block javascript %}
@@ -149,4 +154,6 @@
       })
 
   </script>
+
+
 {% endblock %}

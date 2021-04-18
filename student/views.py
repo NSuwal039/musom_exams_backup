@@ -76,6 +76,8 @@ def examapplication(request):
         else:
             # print(term_obj.start_date-today)
             print(term_obj.__str__() + ": No\n")
+
+    print("term=" + str(term))
     
     if(term):
         selected_subjects= selectedcourses.objects.filter(Q(student_id=student)&Q(semester=student.semester))
@@ -88,10 +90,12 @@ def examapplication(request):
             except:
                 print(subject.__str__() + " exam not found")
         print(exams)
+        return render(request, 'student/examapplication.html', {'student':student, 'term':term, 'exams':exams})
     else:
         print("nothing")
+        return render(request, 'student/examapplication.html', {'student':student})
 
-    return render(request, 'student/examapplication.html', {'student':student, 'term':term, 'exams':exams})
+    
 
 def examslist(request):
     student = get_object_or_404(Student, student_id = request.session['user_id'])
@@ -112,7 +116,6 @@ def examdetails(request):
     student = get_object_or_404(Student, student_id = request.session['user_id'])
     exams = studentgrades.objects.all().filter(application_id__student_id = student)
     SEM_CHOICES = [(r) for r in range(1, student.semester+1)]
-    # to_send = Exams.objects.all().filter(exam_id__in = exams)
     return render(request, 'student/examdetails.html', {'student':student, 'exams':exams, 'semesters':SEM_CHOICES})
 
 def viewcourses(request):
@@ -203,8 +206,6 @@ def confirmAjax(request):
 
     to_add = selectedcourses (subject_id=course_object, student_id=student_object, year = date1.now().year, semester=student_object.semester)
     to_add.save() 
-    # messages.success(request, 'Course ' + course_object.subject_name + ' added.')
-    # return redirect('student:addcourse')
     return HttpResponseRedirect(reverse('student:addcourse'))
 
 def login(request):
