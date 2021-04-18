@@ -12,6 +12,11 @@ from django.contrib import messages
 from django.db.models import Q
 from django.utils.html import format_html
 
+class SubjectNotFound(Exception):
+    pass
+
+class TermNotFound(Exception):
+    pass
 
 student = Student.objects.none()
 
@@ -62,40 +67,44 @@ def registerexam(request):
 
 def examapplication(request):
     student = get_object_or_404(Student, student_id = request.session['user_id'])
-    terms = Term.objects.all()
-    
     today = datetime.date.today()
-    term=Term.objects.none()
+    latest_term = Term.objects.latest('start_date')
+    current_application=application_form.objects.none()
 
-    for term_obj in terms:
-        if (datetime.timedelta(0)<=term_obj.start_date-today<=datetime.timedelta(15)):
-            # print(term_obj.start_date-today)
-            # print(type(term_obj.start_date-today))
-            print(term_obj.__str__() + ": Yes\n")
-            term=term_obj
-        else:
-            # print(term_obj.start_date-today)
-            print(term_obj.__str__() + ": No\n")
+    if (datetime.timedelta(0)<=latest_term.start_date-today<=datetime.timedelta(15)):
+        try:
+            current_application = get_object_or_404(application_form, student=student, term=latest_term)
+            print("in try")
+            selected_subjects= selectedcourses.objects.filter(Q(student_id=student)&Q(semester=student.semester))
+            current_exams=current_application.exam.all()
+            print("current_exams=" + str(current_exams))
+            print("------------------------------------------------------------------------------------")
+            exams=[]
 
-    print("term=" + str(term))
-    
-    if(term):
-        selected_subjects= selectedcourses.objects.filter(Q(student_id=student)&Q(semester=student.semester))
-        print(selected_subjects)
-        exams=[]
+            for subject in selected_subjects:
+                exams.append(Exams.objects.get(Q(term=latest_term)&Q(subject_id=subject.subject_id)))
+            
+            for exam in current_exams:
+                if exam in exams:
+                    exams.remove(exam)
+                    
+            return render(request, 'student/examapplication.html', {'student':student, 'term':latest_term, 'exams':exams, 'already_selected':current_exams})
+        except TermNotFound:
+            print("TermNotFound")
+            selected_subjects= selectedcourses.objects.filter(Q(student_id=student)&Q(semester=student.semester))
+            print(selected_subjects)
+            exams=[]
 
-        for subject in selected_subjects:
-            try:
-                exams.append(Exams.objects.get(Q(term=term)&Q(subject_id=subject.subject_id)))
-            except:
-                print(subject.__str__() + " exam not found")
-        print(exams)
-        return render(request, 'student/examapplication.html', {'student':student, 'term':term, 'exams':exams})
+            for subject in selected_subjects:
+                try:
+                    exams.append(Exams.objects.get(Q(term=latest_term)&Q(subject_id=subject.subject_id)))
+                except SubjectNotFound:
+                    print(subject.__str__() + " exam not found")
+            print(exams)
+            return render(request, 'student/examapplication.html', {'student':student, 'term':latest_term, 'exams':exams})         
     else:
         print("nothing")
         return render(request, 'student/examapplication.html', {'student':student})
-
-    
 
 def examslist(request):
     student = get_object_or_404(Student, student_id = request.session['user_id'])
@@ -242,11 +251,22 @@ def student_application(request):
     app_obj = application_form(application_id=app_id, student=student, term=term, semester=student.semester)
 
     if (application_form.objects.filter(application_id=app_id).exists()):
-        # messages.error(request, 'You have already applied.')
-        url='{% url "student:checkscore" %}'
-        # messages.error(request, 'Application failed. Go to <a href="{% url \'student:checkscore\' %}">link</a>', extra_tags='safe')
-        # messages.error(request, f'Application failed. Go to <a href={url}>link</a>', extra_tags='safe')
-        messages.success(request, 'Application failed. <a href="printapplicationform">Test link</a><br>Or access the page from sidebar.', extra_tags='safe')
+        print("in if")
+        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+
+        while(i<count):
+            exams.append(get_object_or_404(Exams, pk=request.POST[str(i)]))
+            i+=1
+    
+        print(exams)
+        for item in exams:
+            if item not in app_obj.exam.all():
+                print(str(item))
+            app_obj.exam.add(item, through_defaults={'exam_type':True, 'passed':False})
+        
+        app_obj.save()
+
+        messages.success(request, 'Application successful. <a href="printapplicationform">Test link</a><br>Or access the page from sidebar.', extra_tags='safe')
         return HttpResponseRedirect(reverse('student:index'))
     else:
         app_obj.save()

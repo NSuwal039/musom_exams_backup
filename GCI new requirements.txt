@@ -1,0 +1,10 @@
+Leave application - new, me or nirmal
+Routine - upload files/csv, mero
+Notices - notice upload (yogesh ko)
+Calendar - whole year calendar upload(nirmal ko update?)
+Complain system - add verification by admin or program coordinator - new 
+Certificate generation - new - needs template
+	Autofill
+	Issue Field - ?
+	Ref no qutogeneration - ?
+Bulk add student - reverse search from selected courses
