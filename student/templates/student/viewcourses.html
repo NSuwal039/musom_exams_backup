@@ -14,15 +14,9 @@
     </div>
 </form>
 
-    <table class="table table-hover" id='table_data'>
-        <thead class="thead thead-dark">
-            <tr>
-                <th>Course</th>
-                <th>Teacher</th>
-            </tr>
-        </thead>
-        
-    </table>
+    <div id="routine">
+        <h4>Select semester to view routine.</h4>
+    </div>
 
 
 
@@ -38,10 +32,10 @@
         semester = $(this).val();
 
         $.ajax({
-            url: "{% url 'student:postCourses'%}",
+            url: "{% url 'student:show_routine'%}",
             data: {'semester':semester},
             success: function (data) {
-                $("#table_data").html(data);
+                $("#routine").html(data);
             }
         })
     })

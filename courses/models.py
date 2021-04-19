@@ -1,5 +1,6 @@
 from django.db import models
 from django.db.models.deletion import CASCADE
+from django.db.models.enums import Choices
 from django.db.models.fields import CharField
 from teacher.models import Teacher
 from student.models import Student
@@ -81,3 +82,29 @@ class selectedcourses(models.Model):
 
     def __str__(self):
         return self.student_id.student_name + " " + self.subject_id.subject_name
+    
+class routine(models.Model):
+
+    DAY_CHOICES = [
+        (1, "Sunday"),
+        (2, "Monday"),
+        (3, "Tuesday"),
+        (4, "Wednesday"),
+        (5, "Thursday"),
+        (6, "Friday"),
+        (0, "Saturday"),
+    ]
+
+    PERIOD_CHOICES = [(i,i) for i in range (1,9)]
+    semester = models.IntegerField()
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    day = models.IntegerField(choices=DAY_CHOICES)
+    period = models.IntegerField(choices=PERIOD_CHOICES)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields = ['semester', 'day', 'period'], name = 'unique_classtime')
+        ]
+    
+    def __str__(self) -> str:
+        return str(self.subject) + " semester:" + str(self.semester) + " day:" + str(self.day) + " period:" + str(self.period)

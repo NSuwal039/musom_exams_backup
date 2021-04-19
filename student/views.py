@@ -5,7 +5,7 @@ from django.db.models import fields
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render, get_object_or_404
 from student.models import Student
-from courses.models import Exams, application_form, studentgrades, Subject, selectedcourses, Term
+from courses.models import Exams, application_form, studentgrades, Subject, selectedcourses, Term, routine
 from django.urls import reverse
 from django.http import JsonResponse
 from django.contrib import messages
@@ -16,6 +16,9 @@ class SubjectNotFound(Exception):
     pass
 
 class TermNotFound(Exception):
+    pass
+
+class ApplicationNotFound(Exception):
     pass
 
 student = Student.objects.none()
@@ -73,7 +76,23 @@ def examapplication(request):
 
     if (datetime.timedelta(0)<=latest_term.start_date-today<=datetime.timedelta(15)):
         try:
-            current_application = get_object_or_404(application_form, student=student, term=latest_term)
+            print("in try\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+            current_application = application_form.objects.get(student=student, term=latest_term) 
+        except:
+            print("TermNotFound")
+            selected_subjects= selectedcourses.objects.filter(Q(student_id=student)&Q(semester=student.semester))
+            print(selected_subjects)
+            exams=[]
+
+            for subject in selected_subjects:
+                try:
+                    exams.append(Exams.objects.get(Q(term=latest_term)&Q(subject_id=subject.subject_id)))
+                except SubjectNotFound:
+                    print(subject.__str__() + " exam not found")
+            print(exams)
+            return render(request, 'student/examapplication.html', {'student':student, 'term':latest_term, 'exams':exams})         
+        
+        if (current_application):
             print("in try")
             selected_subjects= selectedcourses.objects.filter(Q(student_id=student)&Q(semester=student.semester))
             current_exams=current_application.exam.all()
@@ -89,19 +108,7 @@ def examapplication(request):
                     exams.remove(exam)
                     
             return render(request, 'student/examapplication.html', {'student':student, 'term':latest_term, 'exams':exams, 'already_selected':current_exams})
-        except TermNotFound:
-            print("TermNotFound")
-            selected_subjects= selectedcourses.objects.filter(Q(student_id=student)&Q(semester=student.semester))
-            print(selected_subjects)
-            exams=[]
 
-            for subject in selected_subjects:
-                try:
-                    exams.append(Exams.objects.get(Q(term=latest_term)&Q(subject_id=subject.subject_id)))
-                except SubjectNotFound:
-                    print(subject.__str__() + " exam not found")
-            print(exams)
-            return render(request, 'student/examapplication.html', {'student':student, 'term':latest_term, 'exams':exams})         
     else:
         print("nothing")
         return render(request, 'student/examapplication.html', {'student':student})
@@ -324,3 +331,18 @@ def printapplicationform(request):
     except:
         print("False")
         return render (request, 'student/print_applicationform.html')
+
+def show_routine(request):
+    student = get_object_or_404(Student, student_id = request.session['user_id'])
+    semester = request.GET.get('semester')
+    selected_courses = selectedcourses.objects.filter(Q(student_id=student)&Q(semester=semester))
+    selected_routine = routine.objects.none()
+    for item in selected_courses:
+        selected_routine =selected_routine|routine.objects.filter(Q(subject=item.subject_id)&Q(semester=semester))
+    selected_routine=selected_routine.order_by('day','period')
+    print(selected_routine)
+
+    context = {
+        'routine':selected_routine
+    }
+    return render(request, 'student/routine.html', context)
