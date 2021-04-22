@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'teacher',
     'courses',
     'crispy_forms',
+    'ajax_datatable',
 ]
 
 MIDDLEWARE = [

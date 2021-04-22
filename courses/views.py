@@ -1,3 +1,4 @@
+from json.encoder import JSONEncoder
 from django import forms
 from django.db.models import Q
 from django.http.response import HttpResponse, JsonResponse
@@ -5,7 +6,7 @@ from student.models import Student
 from django.contrib import messages 
 from django.shortcuts import redirect, render, get_object_or_404
 from teacher.models import Teacher
-from .models import Subject, application_form, selectedcourses, studentgrades
+from .models import Subject, Term, application_form, selectedcourses, studentgrades
 from .models import Exams
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -125,20 +126,6 @@ def confirmAjax(request):
     print(form)
     return render(request, 'courses/examapplication.html', {'form':form})
 
-# def confirmapplicationAjax(request):
-#     form_id = request.GET.get('form_id')
-#     forms = application_form.objects.filter(form_id=form_id)
-
-#     for item in forms:
-#         editobject = item
-#         editobject.application_id.status='REG'
-#         gradesobject = studentgrades(student_id=item.application_id.student, exam_id= item.application_id.exam,
-#                     semester= item.application_id.student.semester, marks=-1, exam_type= item.application_id.exam_type)
-#         editobject.application_id.save() 
-#         gradesobject.save()
-    
-#     return JsonResponse({'a':"success"})
-
 def confirmapplication(request):
     app_id = request.GET.get('application_radio')
     application = get_object_or_404(application_form, pk=app_id)
@@ -147,3 +134,48 @@ def confirmapplication(request):
     
     messages.success(request, "Registration confirmed.")
     return HttpResponseRedirect(reverse('courses:index'))
+
+def bulkprintadmitcard(request):
+    terms = Term.objects.all()
+
+    context = {'terms':terms}
+    return render(request, 'courses/bulkprintadmitcard.html',context)
+
+def returnexamdropdown(request):
+    term = get_object_or_404(Term, pk=request.GET.get('term_id'))
+    exams = Exams.objects.filter(term=term)
+
+    context = {"exams":exams}
+    return render(request, "courses/showexamdropdown.html", context)
+
+def return_exams(request):
+    search_string= request.GET.get('exam_id')
+    exams = Exams.objects.filter(exam_id__icontains=search_string)
+    
+    return render(request, "courses/showexamlist.html", {'exams':exams})
+
+def returnstudentlist(request):
+    applications = application_form.objects.filter(exam=get_object_or_404(Exams, pk=request.GET.get('exam_id'))).filter(status=True)
+    
+    context = {'applications':applications,
+                'exam':get_object_or_404(Exams, pk=request.GET.get('exam_id'))}
+    return render(request, 'courses/showadmitcardlist.html', context)
+
+def printadmitcards(request):
+    count = int(request.POST.get("count"))
+    i = 1
+    applications = []
+    while (i<=count):
+        applications.append(get_object_or_404(application_form, pk=request.POST.get(str(i))))
+        i+=1
+    
+    gradeinfo = studentgrades.objects.none()
+
+    for item in applications:
+        gradeinfo = gradeinfo|(studentgrades.objects.filter(application_id=item))
+
+    print(str(gradeinfo) + "\n___________________________________________")
+
+    context = {'applications':applications,
+                'gradeinfo':gradeinfo}
+    return render(request, "courses/showbulkprint.html", context)

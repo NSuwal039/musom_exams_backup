@@ -1,0 +1,175 @@
+{% extends 'courses_base.html'%}
+
+{% block content %}
+<table class="table">
+    <tr>
+        <td colspan="3">
+            <form action="#" id="term_id_submit">
+                <Label for="exam_id">Search by exam code</Label>
+                <input type="text" id="exam_id" name="exam_id">
+                <button type="submit" class="btn btn-primary">Confirm</button>
+            </form>
+        </td>
+    </tr>
+
+<form action="#" method="POST" id="exam_id_dropdown_submit">           
+    <tr>
+        <td>
+            <Label for="term_dropdown">Search by term </Label>
+            <select name="term_dropdown" id="term_dropdown">
+                <option value="">-------------</option>
+                {% for item in terms%}
+                    <option value="{{item.term_id}}">{{item.term_name}} ({{item.year}})</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td>
+            <Label for="exam_dropdown">Exam </Label>
+            <select name="exam_dropdown" id="exam_dropdown">
+                <option value="">-------------</option>
+            </select>
+        </td>
+
+        <td colspan="2"><button type="submit" class="btn btn-primary" disabled id="exam_dropdown_button">Confirm</button></td>
+    </tr>  
+</form> 
+</table>
+<hr>
+
+<div id="stuffgoeshere">
+
+</div>
+ 
+{% endblock %}
+
+{% block javascript %}
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.10.24/b-1.7.0/b-html5-1.7.0/b-print-1.7.0/sl-1.3.3/datatables.min.css"/>
+        
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.10.24/b-1.7.0/b-html5-1.7.0/b-print-1.7.0/sl-1.3.3/datatables.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $("#exam_dropdown").prop("disabled", true);
+        })
+
+        $("#term_dropdown").change(function(){
+            var term_id = $(this).val();
+            if (term_id!=""){
+                $.ajax({
+                    url:"{% url 'courses:returnexamdropdown' %}",
+                    data: {'term_id':term_id},
+                    success: function(data){
+                        $("#exam_dropdown").html(data)
+                        if($("#exam_dropdown").prop("disabled")==true){
+                            $("#exam_dropdown").prop("disabled", false);
+                            $("#exam_dropdown_button").prop("disabled", false);
+                        }
+                        var exam_id = $("#exam_dropdown").val();
+                        if (exam_id==""){
+                            $("#exam_dropdown_button").prop("disabled", true);
+                        }
+                    }
+                })
+            }else{
+                $("#exam_dropdown").prop("disabled", true);
+                $("#exam_dropdown_button").prop("disabled", true);
+
+            }
+   
+        })
+
+        $("#exam_dropdown").change(function(){
+            var exam_id = $(this).val();
+            if (exam_id==""){
+                $("#exam_dropdown_button").prop("disabled", true);
+            }else{
+                $("#exam_dropdown_button").prop("disabled", false);
+            }
+        })
+
+        $("#term_id_submit").submit(function(event){
+            event.preventDefault();
+            var exam_id=$("#exam_id").val();
+            
+            $.ajax({
+                url:"{% url 'courses:return_exams' %}",
+                data:{'exam_id':exam_id},
+                success:function(data){
+                    $("#stuffgoeshere").html(data);
+                }
+            })
+        })
+
+        $("#exam_id_dropdown_submit").submit(function(event){
+            event.preventDefault();
+            var exam_id = $("#exam_dropdown").val();
+            if(exam_id!=""){
+                sendexamcode(exam_id);
+            }
+        })
+        
+        function sendexamcode(examid){
+            $.ajax({
+                url: "{% url 'courses:returnstudentlist' %}",
+                data: {'exam_id':examid},
+                success: function(data){
+                    $("#stuffgoeshere").html(data);
+                    var table = $('#show_admit_cards').DataTable({
+                        search: true,
+                        dom: 'Bfrtip',
+                        columnDefs: [ {
+                            orderable: false,
+                            className: 'select-checkbox',
+                            targets:   0
+                        } ],
+                        select: {
+                            style: 'multi'
+                        },
+                        buttons: [
+                        'selectAll',
+                        'selectNone',
+                        {
+                            text: 'Print',
+                            action: function ( e, dt, node, config ) {
+                                admitcardsubmit();
+                            },
+                            attr:  {
+                                id: 'printadmitcard_submit'
+                            },
+                        },
+                        ],
+                    });
+                }
+            })
+        }
+
+        $(document).ready(function() {
+
+        })
+
+        function admitcardsubmit(){
+            var count=0;
+            var tr_count=0;
+            count = $("#show_admit_cards tbody tr.selected").length;
+
+
+            $("#printadmitcard_form_div").html("");
+            $("#show_admit_cards tbody tr.selected").each(function(){
+                tr_count+=1;
+                var app_id = $(this).find("td#application_id").text();
+                var to_add = "<input type=\"text\" name="+ tr_count +" value="+app_id +" readonly hidden>";
+                $("#printadmitcard_form_div").append(to_add);
+            })
+
+            if(count>0){
+                $("#application_count").val(tr_count);
+                $("#printadmitcard_form_submit").click();
+            }else{
+                $("#application_count").val(0);
+                alert("Please select a student or Select All")
+            }
+        }       
+    </script>
+{% endblock %}
+

@@ -30,7 +30,7 @@ def subscore(request):
     exam_code = request.GET['exam']
     selected_exam = get_object_or_404(Exams, exam_id=exam_code)
     selected_subject=selected_exam.subject_id
-    existing_records = studentgrades.objects.all().filter(exam_id=selected_exam)
+    # existing_records = studentgrades.objects.all().filter(exam_id=selected_exam)
     student_data = selectedcourses.objects.all().filter(subject_id = selected_subject)
     
     # form = gradesform()
@@ -57,7 +57,7 @@ def submitscore(request):
             except:
                 failed_attempts.append(student.application_id.student)
     else:
-        print("You fucked up")
+        print("Error")
     
     if (len(failed_attempts)==0):
         messages.success(request, "Marks entry for " + str(entries) + " students successful")

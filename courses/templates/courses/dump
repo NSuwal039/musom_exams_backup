@@ -1,9 +1,17 @@
-<script type="text/javascript">
-    $(window).on('load', function() {
-        {% if messages %}
-            {% for message in messages %}
-                $('#myModal').modal('show');
-            {% endfor %}
-        {% endif %}
-        });
-</script>
+
+        var count =0;
+        var student_id={};
+
+function printAdmitCards(){
+            count =0;
+            student_id={};
+
+            $("tr.selected").each(function(){
+                student_id[count]=$(this).data('id');
+                count++;
+            })
+
+            $.ajax({
+                url:" {% url 'courses:printadmitcards '%}"
+            })
+        }
