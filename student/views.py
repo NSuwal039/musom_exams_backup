@@ -26,7 +26,7 @@ student = Student.objects.none()
 def index(request):
     if request.method == 'POST':
         request.session['user_id'] = request.POST['userID']
-        print(request.POST['userID'])
+        
     student = get_object_or_404(Student, student_id = request.session['user_id'])
     print(request.META.get('HTTP_REFERER'))
     return render(request, 'student/index.html', {'student':student})
