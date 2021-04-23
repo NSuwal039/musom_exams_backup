@@ -6,7 +6,7 @@
             <th>Student ID</th>
             <th>Student Name</th>
             <th>Exam</th>
-            <th>Date</th>
+            <th>Marks</th>
         </tr>
     </thead>
 
@@ -20,13 +20,13 @@
             <td>{{item.student.student_id}}</td>
             <td>{{item.student.student_name}}</td>
             <td>{{exam.exam_title}}</td>
-            <td>{{exam.date}}</td>
+            <td>{{item.exam.all.studentgrades}}</td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
 
-<form action="{% url 'courses:printadmitcards' %}" id="printadmitcard_form" method="POST">
+<form action="{% url 'courses:printresults' %}" id="printadmitcard_form" method="POST">
     {% csrf_token %}
     <div id="printadmitcard_form_div">    
     </div>

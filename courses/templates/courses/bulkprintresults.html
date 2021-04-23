@@ -93,7 +93,7 @@
             var exam_id=$("#exam_id").val();
             
             $.ajax({
-                url:"{% url 'courses:return_exams_admit' %}",
+                url:"{% url 'courses:return_exams_results' %}",
                 data:{'exam_id':exam_id},
                 success:function(data){
                     $("#stuffgoeshere").html(data);
@@ -111,7 +111,7 @@
         
         function sendexamcode(examid){
             $.ajax({
-                url: "{% url 'courses:returnstudentlist_admit' %}",
+                url: "{% url 'courses:returnstudentlist_results' %}",
                 data: {'exam_id':examid},
                 success: function(data){
                     $("#stuffgoeshere").html(data);

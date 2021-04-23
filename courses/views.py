@@ -148,13 +148,13 @@ def returnexamdropdown(request):
     context = {"exams":exams}
     return render(request, "courses/showexamdropdown.html", context)
 
-def return_exams(request):
+def return_exams_admit(request):
     search_string= request.GET.get('exam_id')
     exams = Exams.objects.filter(exam_id__icontains=search_string)
     
-    return render(request, "courses/showexamlist.html", {'exams':exams})
+    return render(request, "courses/showexamlist_admit.html", {'exams':exams})
 
-def returnstudentlist(request):
+def returnstudentlist_admit(request):
     applications = application_form.objects.filter(exam=get_object_or_404(Exams, pk=request.GET.get('exam_id'))).filter(status=True)
     
     context = {'applications':applications,
@@ -178,4 +178,46 @@ def printadmitcards(request):
 
     context = {'applications':applications,
                 'gradeinfo':gradeinfo}
-    return render(request, "courses/showbulkprint.html", context)
+    return render(request, "courses/showbulkprintadmit.html", context)
+
+#----------------------------------------------------------------------------------------------------------------------
+
+#bulk print results#
+
+def bulkprintresults(request):
+    terms = Term.objects.all()
+
+    context = {'terms':terms}
+    return render(request, 'courses/bulkprintresults.html',context)
+
+def return_exams_results(request):
+    search_string= request.GET.get('exam_id')
+    exams = Exams.objects.filter(exam_id__icontains=search_string)
+    
+    return render(request, "courses/showexamlist_results.html", {'exams':exams})
+
+def returnstudentlist_results(request):
+    applications = application_form.objects.filter(exam=get_object_or_404(Exams, pk=request.GET.get('exam_id'))).filter(status=True)
+    
+    context = {'applications':applications,
+                'exam':get_object_or_404(Exams, pk=request.GET.get('exam_id'))}
+    return render(request, 'courses/showresultslist.html', context)
+
+def printresults(request):
+    count = int(request.POST.get("count"))
+    i = 1
+    applications = []
+    while (i<=count):
+        applications.append(get_object_or_404(application_form, pk=request.POST.get(str(i))))
+        i+=1
+    
+    gradeinfo = studentgrades.objects.none()
+
+    for item in applications:
+        gradeinfo = gradeinfo|(studentgrades.objects.filter(application_id=item))
+
+    print(str(gradeinfo) + "\n___________________________________________")
+
+    context = {'applications':applications,
+                'gradeinfo':gradeinfo}
+    return render(request, "courses/showbulkprintresults.html", context)
