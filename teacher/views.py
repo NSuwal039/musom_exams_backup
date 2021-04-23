@@ -14,11 +14,11 @@ from django.db.models import Q
 def index(request):
     if request.method == 'POST':
         request.session['teacherID'] = request.POST['teacherID']
-    teacher = get_object_or_404(Teacher, teacher_id = request.session['teacherID'])
+    teacher = get_object_or_404(Teacher, pk = request.session['teacherID'])
     return render (request, 'teacher/index.html', {'teacher':teacher})
 
 def addscore(request):
-    teacher = get_object_or_404(Teacher, teacher_id = request.session['teacherID'])
+    teacher = get_object_or_404(Teacher, pk = request.session['teacherID'])
     terms = Term.objects.all()
     if request.method=='GET':
         subject = Subject.objects.all().filter(teacher_id=teacher)
@@ -26,7 +26,7 @@ def addscore(request):
         return render(request, 'teacher/addscore.html', {'teacher': teacher, 'subject':subject,'exams':exams, 'terms':terms})
 
 def subscore(request):
-    teacher = get_object_or_404(Teacher, teacher_id = request.session['teacherID'])
+    teacher = get_object_or_404(Teacher, pk = request.session['teacherID'])
     exam_code = request.GET['exam']
     selected_exam = get_object_or_404(Exams, exam_id=exam_code)
     selected_subject=selected_exam.subject_id
@@ -38,7 +38,7 @@ def subscore(request):
     return render (request, 'teacher/dump.html', context )
 
 def submitscore(request):
-    teacher = get_object_or_404(Teacher, teacher_id = request.session['teacherID'])
+    teacher = get_object_or_404(Teacher, pk = request.session['teacherID'])
     exam = get_object_or_404(Exams, exam_id=request.GET['exam_id'])
     selected_subject = exam.subject_id
     print("subject: " + selected_subject.__str__())
@@ -67,12 +67,12 @@ def submitscore(request):
         return HttpResponseRedirect(reverse('teacher:index'))
 
 def studentlist(request):
-    teacher = get_object_or_404(Teacher, teacher_id = request.session['teacherID'])
+    teacher = get_object_or_404(Teacher, pk = request.session['teacherID'])
     return render (request, 'teacher/studentlist.html', {'teacher':teacher})
 
     
 def checkscore(request):
-    teacher = get_object_or_404(Teacher, teacher_id = request.session['teacherID'])
+    teacher = get_object_or_404(Teacher, pk = request.session['teacherID'])
     subjects = Subject.objects.all().filter(teacher_id=teacher)
     exams = Exams.objects.all().filter(subject_id__in=subjects)
 
@@ -87,7 +87,7 @@ def checkscore(request):
         return render(request, 'teacher/checkscore.html', context)
 
 def examsAjax(request):
-    # teacher = get_object_or_404(Teacher, teacher_id = request.session['teacherID'])
+    # teacher = get_object_or_404(Teacher, pk = request.session['teacherID'])
     exam_id = request.GET.get('exam_id')
     selected_exam = get_object_or_404(Exams, exam_id=exam_id)
     student_data = studentgrades.objects.all().filter(exam_id=selected_exam)
@@ -98,7 +98,7 @@ def login(request):
     return render(request, 'teacher/login.html')
 
 def loadExamsAjax(request):
-    teacher = teacher = get_object_or_404(Teacher, teacher_id = request.session['teacherID'])
+    teacher = teacher = get_object_or_404(Teacher, pk = request.session['teacherID'])
     term = get_object_or_404(Term, pk=request.GET.get('term_id'))
     subject = Subject.objects.all().filter(teacher_id=teacher)
     exams = Exams.objects.all().filter(Q(subject_id__in=subject) & Q(term=term))

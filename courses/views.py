@@ -77,18 +77,18 @@ def studentsAjax(request):
     student_all = Student.objects.all()
 
     for student in student_all:
-        if student_id in student.student_id:
+        if student_id in student.pk:
             student_list.append(student)
     
     return render(request, 'courses/studentlist.html',{'students':student_list})
 
 def studentsmarksentry(request, id):
-    student = get_object_or_404(Student, student_id=id)
+    student = get_object_or_404(Student, pk=id)
     exams = studentgrades.objects.filter(student_id = student)
     return render(request, 'courses/studentmarksentry.html', {'student': student, 'exams':exams})
 
 def submitscores(request):
-    student = get_object_or_404(Student, student_id=request.POST['student_id'])
+    student = get_object_or_404(Student, pk=request.POST['student_id'])
     exams = studentgrades.objects.filter(student_id=student)
 
     for exam in exams:

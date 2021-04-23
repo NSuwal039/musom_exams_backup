@@ -27,17 +27,17 @@ def index(request):
     if request.method == 'POST':
         request.session['user_id'] = request.POST['userID']
         
-    student = get_object_or_404(Student, student_id = request.session['user_id'])
+    student = get_object_or_404(Student, pk = request.session['user_id'])
     print(request.META.get('HTTP_REFERER'))
     return render(request, 'student/index.html', {'student':student})
 
 def checkscore(request):
-    student = get_object_or_404(Student, student_id = request.session['user_id'])
+    student = get_object_or_404(Student, pk = request.session['user_id'])
     SEM_CHOICES = [(r) for r in range(1, student.semester+1)]
     return render(request, 'student/checkscore.html', {'student': student,'semesters':SEM_CHOICES})
 
 def addcourse(request):
-    student = get_object_or_404(Student, student_id = request.session['user_id'])
+    student = get_object_or_404(Student, pk = request.session['user_id'])
     
     courses_remove = selectedcourses.objects.all().filter(student_id=student)
     subject_list = Subject.objects.all()
@@ -47,7 +47,7 @@ def addcourse(request):
     return render(request, 'student/addcourse.html', {'student':student, 'courses':subject_list})
 
 def registerexam(request):
-    student = get_object_or_404(Student, student_id = request.session['user_id'])
+    student = get_object_or_404(Student, pk = request.session['user_id'])
     if request.method == 'GET':
         courses = selectedcourses.objects.all().filter(student_id = student)
         exam = Exams.objects.all()
@@ -69,7 +69,7 @@ def registerexam(request):
         return HttpResponseRedirect(reverse('student:index'))
 
 def examapplication(request):
-    student = get_object_or_404(Student, student_id = request.session['user_id'])
+    student = get_object_or_404(Student, pk = request.session['user_id'])
     today = datetime.date.today()
     latest_term = Term.objects.latest('start_date')
     current_application=application_form.objects.none()
@@ -114,7 +114,7 @@ def examapplication(request):
         return render(request, 'student/examapplication.html', {'student':student})
 
 def examslist(request):
-    student = get_object_or_404(Student, student_id = request.session['user_id'])
+    student = get_object_or_404(Student, pk = request.session['user_id'])
     term_id = request.GET.get('term_id')
     term = get_object_or_404(Term, pk=term_id)
     selected_subjects=selectedcourses.objects.filter(student_id=student)
@@ -129,26 +129,26 @@ def examslist(request):
     return render(request, 'student/examslist.html', {'exams':exams_list, 'term':term})
     
 def examdetails(request):
-    student = get_object_or_404(Student, student_id = request.session['user_id'])
+    student = get_object_or_404(Student, pk = request.session['user_id'])
     exams = studentgrades.objects.all().filter(application_id__student_id = student)
     SEM_CHOICES = [(r) for r in range(1, student.semester+1)]
     return render(request, 'student/examdetails.html', {'student':student, 'exams':exams, 'semesters':SEM_CHOICES})
 
 def viewcourses(request):
-    student = get_object_or_404(Student, student_id = request.session['user_id'])
+    student = get_object_or_404(Student, pk = request.session['user_id'])
     SEM_CHOICES = [(r) for r in range(1, student.semester+1)]
     courses = selectedcourses.objects.all().filter(student_id = student)
     return render (request, 'student/viewcourses.html', {'courses':courses, 'student':student, 'semesters':SEM_CHOICES})
 
 def postCourses(request):
-    student = get_object_or_404(Student, student_id = request.session['user_id'])
+    student = get_object_or_404(Student, pk = request.session['user_id'])
     semester = request.GET.get('semester')
     courses_data = selectedcourses.objects.all().filter(student_id = student).filter(semester=semester)
     context = { 'courses' : courses_data}
     return render(request, 'student/courseslist.html', context)
     
 def postGrades(request):
-    student = get_object_or_404(Student, student_id = request.session['user_id'])
+    student = get_object_or_404(Student, pk = request.session['user_id'])
     semester = request.GET.get('semester')
     grades_data =  studentgrades.objects.filter(Q(application_id__student_id=student)&Q(application_id__semester=semester)&~Q(marks=-1))
     remaining = studentgrades.objects.filter(Q(application_id__student_id=student)&Q(application_id__semester=semester)&Q(marks=-1))
@@ -156,13 +156,13 @@ def postGrades(request):
     return render(request, 'student/grades.html', context)
 
 def postExams(request):
-    student = get_object_or_404(Student, student_id = request.session['user_id'])
+    student = get_object_or_404(Student, pk = request.session['user_id'])
     semester = request.GET.get('semester')
     exams_data = studentgrades.objects.all().filter(application_id__student_id = student).filter(application_id__semester=semester)
     return render(request, 'student/exams.html', {'exams': exams_data})
 
 def testexamAjax(request):
-    student = get_object_or_404(Student, student_id = request.session['user_id'])
+    student = get_object_or_404(Student, pk = request.session['user_id'])
     exam_data = request.GET.get('exams')
     exams = json.loads(exam_data)
     print(exams)
@@ -180,7 +180,7 @@ def testexamAjax(request):
     return render(request, 'student/selectedexams.html', {'exams':exams_list})
 
 def confirmexamAjax(request):
-    student = get_object_or_404(Student, student_id = request.session['user_id'])
+    student = get_object_or_404(Student, pk = request.session['user_id'])
     exam_data = request.GET.get('exam_data')
     exams = json.loads(exam_data)
     exams_list=[]
@@ -197,7 +197,7 @@ def confirmexamAjax(request):
     return JsonResponse({"a":"b"})
 
 def addAjax(request):
-    student = get_object_or_404(Student, student_id = request.session['user_id'])
+    student = get_object_or_404(Student, pk = request.session['user_id'])
     search_string = request.GET.get("search_string")
     course_list = []
     course_all = Subject.objects.all()
@@ -215,7 +215,7 @@ def addAjax(request):
     return render(request, 'student/courseaddlist.html', {'courses':final_list})
 
 def confirmAjax(request):
-    student = get_object_or_404(Student, student_id = request.session['user_id'])
+    student = get_object_or_404(Student, pk = request.session['user_id'])
     course_code = request.GET.get("course_id")
     student_object = student
     course_object = get_object_or_404(Subject, subject_code = course_code)
@@ -228,7 +228,7 @@ def login(request):
     return render(request, 'student/login.html')
 
 def viewform(request):
-    student = get_object_or_404(Student, student_id = request.session['user_id'])
+    student = get_object_or_404(Student, pk = request.session['user_id'])
     term = get_object_or_404(Term, pk=request.POST['term'])
     count = int(request.POST['count'])
     exams=[]
@@ -248,7 +248,7 @@ def viewform(request):
     return render(request, 'student/view_form.html', context)
 
 def student_application(request):
-    student = get_object_or_404(Student, student_id = request.session['user_id'])
+    student = get_object_or_404(Student, pk = request.session['user_id'])
     term = get_object_or_404(Term, pk=request.POST['term'])
     count = int(request.POST['count'])
     app_id = request.POST['application_id']
@@ -303,7 +303,7 @@ def printresults(request, form_id):
 def printadmitcard(request):
     latest_term = Term.objects.latest('start_date')
     print(latest_term)
-    student = get_object_or_404(Student, student_id = request.session['user_id'])
+    student = get_object_or_404(Student, pk = request.session['user_id'])
 
     try:
         application=application_form.objects.get(Q(term=latest_term)&Q(student=student)&Q(status=True))
@@ -319,7 +319,7 @@ def printadmitcard(request):
 def printapplicationform(request):
     latest_term = Term.objects.latest('start_date')
     print(latest_term)
-    student = get_object_or_404(Student, student_id = request.session['user_id'])
+    student = get_object_or_404(Student, pk = request.session['user_id'])
 
     try:
         # application=application_form.objects.get(Q(term=latest_term)&Q(student=student)&Q(status=True))
@@ -333,7 +333,7 @@ def printapplicationform(request):
         return render (request, 'student/print_applicationform.html')
 
 def show_routine(request):
-    student = get_object_or_404(Student, student_id = request.session['user_id'])
+    student = get_object_or_404(Student, pk = request.session['user_id'])
     semester = request.GET.get('semester')
     selected_courses = selectedcourses.objects.filter(Q(student_id=student)&Q(semester=semester))
     selected_routine = routine.objects.none()
