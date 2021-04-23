@@ -26,4 +26,5 @@ urlpatterns=[
     path('ajax/addcourse', views.addAjax, name = "addAjax"),
     path('ajax/confirmcourse', views.confirmAjax, name = "confirmAjax"),
     path('login', views.login, name = "login"),
+    path('logout', views.logout, name = "logout"),
 ]

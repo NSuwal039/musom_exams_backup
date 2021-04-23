@@ -138,4 +138,9 @@ def uploadcsv(request):
     messages.success(request,"Marks upload successful")
     return HttpResponseRedirect(reverse('teacher:index'))
 
+def logout(request):
+    del request.session['user_id']
+    return render (request, "teacher/login.html")
+
+
         

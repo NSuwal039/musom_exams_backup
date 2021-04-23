@@ -346,3 +346,8 @@ def show_routine(request):
         'routine':selected_routine
     }
     return render(request, 'student/routine.html', context)
+
+def logout(request):
+    del request.session['user_id']
+    return render (request, "student/login.html")
+

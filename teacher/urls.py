@@ -11,6 +11,7 @@ urlpatterns=[
     path('checkscore', views.checkscore, name='checkscore'),
     path('login', views.login, name = "login"),
     path('uploadcsv', views.uploadcsv, name = "uploadcsv"),
+    path('logout', views.logout, name = "logout"),
     path('exportcsv/<str:exam_id>', views.exportcsv, name = "exportcsv"),
     path('studentlist', views.studentlist, name='studentlist'),
     path('ajax/studentlist', views.examsAjax, name='examsAjax'),

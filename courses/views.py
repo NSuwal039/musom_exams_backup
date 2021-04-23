@@ -221,3 +221,4 @@ def printresults(request):
     context = {'applications':applications,
                 'gradeinfo':gradeinfo}
     return render(request, "courses/showbulkprintresults.html", context)
+
