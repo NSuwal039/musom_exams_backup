@@ -123,44 +123,34 @@
                 </tr>
               </thead>
               <tbody>
-                {% for exam in form.exam.all %}
+                {% for grade in gradeinfo %}
+                  {% if grade.application_id == form %}
                   <tr>
                     <td>
                       {{forloop.counter}}
                     </td>
                     <td>
-                      {{exam.exam_id}}
+                      {{grade.exam_id.exam_id}}
                     </td>
                     <td>
-                      {{exam.subject_id.subject_name}}
+                      {{grade.exam_id.subject_id.subject_name}}
                     </td>
                     <td>
-                      {% for grade in gradeinfo %}
-                      {% if grade.application_id == form %}
-                        {% if grade.exam_id == exam%}
-                          {% if grade.marks == -1 %}
-                          Ungraded
-                          {% else %}
-                          {{grade.marks}}
-                          {% endif %}
-                        {% endif %}
+                      {% if grade.marks == -1 %}
+                        Ungraded
+                      {% else %}
+                        {{grade.marks}}
+                      {% endif %}                   
+                    </td>
+                    <td>
+                      {% if grade.exam_type == True %}
+                        Regular
+                      {% else %}
+                        Chance
                       {% endif %}
-                      {% endfor%}
-                    </td>
-                    <td>
-                      {% for grade in gradeinfo %}
-                      {% if grade.application_id == form %}
-                        {% if grade.exam_id == exam%}
-                          {% if grade.exam_type == True %}
-                            Regular
-                          {% else %}
-                            Chance
-                          {% endif %}
-                        {% endif %}
-                        {% endif %}
-                      {% endfor%}
                     </td>
                   </tr>
+                  {% endif %}
                 {% endfor %}
               </tbody>
             </table>

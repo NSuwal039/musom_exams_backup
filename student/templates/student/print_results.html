@@ -98,11 +98,13 @@
                 <th>Exam Code</th>
                 <th>Subject</th>
                 <th>Marks</th>
+                <th>Status</th>
                 <th>Regular/Chance</th>
             </tr>
           </thead>
           <tbody>
-            {% for exam in form.exam.all %}
+            {% for exam in exams %}
+
               <tr>
                 <td>
                   {{forloop.counter}}
@@ -117,6 +119,17 @@
                   {% for grade in grades %}
                     {% if grade.exam_id == exam%}
                       {{grade.marks}}
+                    {% endif %}
+                  {% endfor%}
+                </td>
+                <td>
+                  {% for grade in grades %}
+                    {% if grade.exam_id == exam%}
+                      {% if grade.passed %}
+                      Passed
+                      {% else %}
+                      Failed
+                      {% endif %}
                     {% endif %}
                   {% endfor%}
                 </td>

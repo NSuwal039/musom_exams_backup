@@ -91,8 +91,8 @@
         }
         
         sub_text=test;
-        id_text = sub_id.concat(".").concat(term).concat(".").concat(year);
-        title_text = sub_text.concat(" ").concat(term_text).concat(" ").concat(year);
+        id_text = sub_id.concat(".").concat(term);
+        title_text = sub_text.concat(" ").concat(term_text);
         $("#id_exam_id").val(id_text);
         $("#id_exam_title").val(title_text);
 
@@ -103,15 +103,15 @@
         
         term = $(this).val();
         term_text = $(this).find("option:selected").text()
-        id_text = sub_id.concat(".").concat(term).concat(".").concat(year)
-        title_text = sub_text.concat(" ").concat(term_text).concat(" ").concat(year)
+        id_text = sub_id.concat(".").concat(term)
+        title_text = sub_text.concat(" ").concat(term_text)
         $("#id_exam_id").val(id_text);
         $("#id_exam_title").val(title_text);
 
     })
 
     // year onchange
-    $("#id_year").change(function(event){
+    /** $("#id_year").change(function(event){
         
         year = $(this).val();
         id_text = sub_id.concat(".").concat(term).concat(".").concat(year)
@@ -119,7 +119,7 @@
         $("#id_exam_id").val(id_text);
         $("#id_exam_title").val(title_text);
 
-    })
+    })**/
     
 </script>
 {% endblock %}

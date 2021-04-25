@@ -214,7 +214,7 @@ def printresults(request):
     gradeinfo = studentgrades.objects.none()
 
     for item in applications:
-        gradeinfo = gradeinfo|(studentgrades.objects.filter(application_id=item))
+        gradeinfo = gradeinfo|studentgrades.objects.filter(Q(application_id=item)&Q(passed=True)).order_by('-marks')[0:4]
 
     print(str(gradeinfo) + "\n___________________________________________")
 

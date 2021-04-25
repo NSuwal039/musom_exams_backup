@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.db.models.query import QuerySet
 from django.http.response import HttpResponseRedirect, JsonResponse
 from django.http.response import HttpResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import redirect, render, get_object_or_404
 from courses.models import Term, application_form, studentgrades, Exams, Subject, selectedcourses
 from .models import Teacher 
 from student.models import Student
@@ -140,7 +140,7 @@ def uploadcsv(request):
 
 def logout(request):
     del request.session['user_id']
-    return render (request, "teacher/login.html")
+    return HttpResponseRedirect(reverse('teacher:login'))
 
 
         

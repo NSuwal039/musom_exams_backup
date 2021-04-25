@@ -293,10 +293,15 @@ def student_application(request):
 def printresults(request, form_id):
     # student = get_object_or_404(Student, student_id = request.session['user_id'])
     form = get_object_or_404(application_form, pk=form_id)
-    grades = studentgrades.objects.filter(application_id=form)
-    print(form)
+    grades = studentgrades.objects.filter(Q(application_id=form)&Q(passed=True)).order_by('-marks')[0:4]
+    
+    exams = []
+    for item in grades:
+        exams.append(item.exam_id)
+    
     context={'form':form,
-            'grades':grades
+            'grades':grades,
+            'exams':exams
              }
     return render (request, 'student/print_results.html', context)
 
@@ -349,5 +354,5 @@ def show_routine(request):
 
 def logout(request):
     del request.session['user_id']
-    return render (request, "student/login.html")
+    return HttpResponseRedirect(reverse('student:login'))
 
