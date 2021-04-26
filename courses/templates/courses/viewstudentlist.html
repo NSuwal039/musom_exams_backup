@@ -32,13 +32,13 @@
     {% if records%}
     <hr>
         <table class="table table-hover">
-            <thead>
+            <thead  class="thead thead-dark">
                 <tr>
                     <th>Student id</th>
                     <th>Student Name</th>
                     <th>Semester</th>
                 </tr>
-            </thead class="thead thead-dark">
+            </thead>
 
             <tbody>
                 {% for item in records %}
@@ -50,5 +50,7 @@
                 {% endfor %}
             </tbody>
         </table>
+
+        {{records|length}} student records found.
     {% endif %}
 {% endblock %}
