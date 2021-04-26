@@ -109,54 +109,59 @@
               <strong>Semester: </strong>{{form.semester}}
             </div>
         </div>
-    
-        <div class="row">
-          <div class="col-12 table-responsive">
-            <table class="table table-striped">
-              <thead class="thead thead-dark">
-                <tr>
-                    <th>S.N.</th>
-                    <th>Exam Code</th>
-                    <th>Subject</th>
-                    <th>Marks</th>
-                    <th>Regular/Chance</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for grade in gradeinfo %}
-                  {% if grade.application_id == form %}
-                  <tr>
-                    <td>
-                      {{forloop.counter}}
-                    </td>
-                    <td>
-                      {{grade.exam_id.exam_id}}
-                    </td>
-                    <td>
-                      {{grade.exam_id.subject_id.subject_name}}
-                    </td>
-                    <td>
-                      {% if grade.marks == -1 %}
-                        Ungraded
-                      {% else %}
-                        {{grade.marks}}
-                      {% endif %}                   
-                    </td>
-                    <td>
-                      {% if grade.exam_type == True %}
-                        Regular
-                      {% else %}
-                        Chance
+        {% for student in noresults%}
+          {% if form.student == student %}
+          <h4 style="text-align: center;"> No Valid Results </h4>
+          {% else%}
+            <div class="row">
+              <div class="col-12 table-responsive">
+                <table class="table table-striped">
+                  <thead class="thead thead-dark">
+                    <tr>
+                        <th>S.N.</th>
+                        <th>Exam Code</th>
+                        <th>Subject</th>
+                        <th>Marks</th>
+                        <th>Regular/Chance</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for grade in gradeinfo %}
+                      {% if grade.application_id == form %}
+                      <tr>
+                        <td>
+                          {{forloop.counter}}
+                        </td>
+                        <td>
+                          {{grade.exam_id.exam_id}}
+                        </td>
+                        <td>
+                          {{grade.exam_id.subject_id.subject_name}}
+                        </td>
+                        <td>
+                          {% if grade.marks == -1 %}
+                            Ungraded
+                          {% else %}
+                            {{grade.marks}}
+                          {% endif %}                   
+                        </td>
+                        <td>
+                          {% if grade.exam_type == True %}
+                            Regular
+                          {% else %}
+                            Chance
+                          {% endif %}
+                        </td>
+                      </tr>
                       {% endif %}
-                    </td>
-                  </tr>
-                  {% endif %}
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-          <!-- /.col -->
-        </div>  
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.col -->
+            </div>
+          {% endif %}  
+        {% endfor %}
         <!-- /.row -->
         <div class="breakpage"></div>
     {% endfor %}

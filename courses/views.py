@@ -207,18 +207,59 @@ def printresults(request):
     count = int(request.POST.get("count"))
     i = 1
     applications = []
+    gradeinfo = studentgrades.objects.none()
+    students = []
+    no_results = []
+
     while (i<=count):
         applications.append(get_object_or_404(application_form, pk=request.POST.get(str(i))))
         i+=1
     
-    gradeinfo = studentgrades.objects.none()
-
+    for item in applications:
+        students.append(item.student)
+    
     for item in applications:
         gradeinfo = gradeinfo|studentgrades.objects.filter(Q(application_id=item)&Q(passed=True)).order_by('-marks')[0:4]
 
-    print(str(gradeinfo) + "\n___________________________________________")
+    for student in students:
+        i=0
+        for item in gradeinfo:
+            if item.application_id.student == student:
+                i+=1
+        
+        if i==0:
+            no_results.append(student)
+        
 
     context = {'applications':applications,
-                'gradeinfo':gradeinfo}
+                'gradeinfo':gradeinfo,
+                'noresults':no_results}
     return render(request, "courses/showbulkprintresults.html", context)
+
+def viewstudentlist(request):
+    year=selectedcourses._meta.get_field('year').choices
+    year_choices = [ i[1] for i in year]
+
+    if request.method=='GET':
+        
+        context={'year':year_choices}
+        return render(request, 'courses/viewstudentlist.html', context)
+    else:
+        selected_year = request.POST['year']
+        subject_code = request.POST['subject']
+        subject = Subject.objects.filter(pk=subject_code)
+        context={'year':year_choices}
+        records = selectedcourses.objects.none()
+
+        if (subject):
+            records = selectedcourses.objects.filter(Q(year=selected_year)&Q(subject_id=subject[0]))
+
+        if (records):
+            context['records']=records
+            return render(request, 'courses/viewstudentlist.html', context)
+        else:
+            messages.error(request, "Record not found.")
+            return render (request, 'courses/viewstudentlist.html', context)
+        
+        
 

@@ -1,0 +1,54 @@
+{% extends 'courses_base.html' %}
+
+{% block content %}
+    <form class ="form" action=" {% url 'courses:viewstudentlist'%}" method="POST">
+        {% csrf_token%}
+        <table>
+            <tr>
+                <td>
+                    <label for="subject_id">
+                        Enter subject code:
+                    </label>
+                    <input type="text" id="subject_id" name="subject">
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="year_dropdown"> Select year:</label>
+                    <select name="year" id="year_dropdown">
+                        {% for year in year%}
+                            <option value={{year}}>{{year}}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td colspan="=2">
+                    <input type="submit" class="btn btn-primary">
+                </td>
+            </tr>
+        </table>
+    </form>
+
+    {% if records%}
+    <hr>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Student id</th>
+                    <th>Student Name</th>
+                    <th>Semester</th>
+                </tr>
+            </thead class="thead thead-dark">
+
+            <tbody>
+                {% for item in records %}
+                <tr>
+                    <td> {{ item.student_id.student_id}}</td>
+                    <td> {{ item.student_id.student_name }}</td>
+                    <td> {{ item.student_id.semester }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}

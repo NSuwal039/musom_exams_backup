@@ -12,6 +12,7 @@ urlpatterns=[
     path('examtoppers', views.examtoppers, name='examtoppers'),
     path('addstudentmarks', views.addstudentmarks, name='addstudentmarks'),
     path('submitscores', views.submitscores, name='submitscores'),
+    path('viewstudentlist', views.viewstudentlist, name='viewstudentlist'),
 
     #bulk print admit cards
     path('bulkprintadmitcard', views.bulkprintadmitcard, name='bulkprintadmitcard'),
